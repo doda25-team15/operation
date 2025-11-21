@@ -2,8 +2,12 @@
 
 - Jimmy:
   Created the organization, repositories and board for the project. Initialized the model-service repository and added a workflow for training the model.
+
 - Emīls:
   pushed project template to app
+
+- Riya:
+  Updated the project template to include the frontend in the app repository and the backend in the model-service repository
 
 ### Week 2 (Nov 17-23)
 
@@ -17,3 +21,5 @@ https://github.com/doda25-team15/model-service/pull/1, https://github.com/doda25
   I created the lib-version project, made it version-aware, and added a dependency on it in the app project.
 
 - Emīls: https://github.com/doda25-team15/app/pull/2 , Added Dockerfile to the frontend 
+
+- Riya: https://github.com/doda25-team15/app/pull/1, https://github.com/doda25-team15/model-service/pull/2, https://github.com/doda25-team15/model-service/pull/3, Created the image release workflow for frontend and backend, including support for multiple architectures in the container images.

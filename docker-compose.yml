@@ -1,0 +1,28 @@
+version: "3.9"
+
+services:
+  app-service:
+    image: ghcr.io/doda25-team15/app:latest
+    container_name: app-service
+    ports:
+      - "8080:8080"     # Only this is exposed to localhost
+    environment:
+      MODEL_SERVICE_URL: "http://model-service:8081"
+      PORT: "8080"
+      GITHUB_ACTOR: ${GITHUB_ACTOR}
+      GITHUB_TOKEN: ${GITHUB_TOKEN}
+    depends_on:
+      - model-service
+
+  model-service:
+    image: ghcr.io/doda25-team15/model-service:latest
+    container_name: model-service
+    expose:
+      - "8081"          # only exposed internally to other services
+    environment:
+      PORT: "8081"
+    volumes:
+      - model_cache:/output   # F10-compatible model location
+
+volumes:
+  model_cache:

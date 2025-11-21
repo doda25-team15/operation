@@ -70,5 +70,6 @@ You can run the project using docker-compose.yml file. Just go to the operation 
 make sure to replace github_personal_token and github_username 
 
 ## Comments for A1:
-    docker compose initializes both frontend and backend, but visiting localhost:8080/sms returns error, which we couldn't solve at the moment.
-    localhost:8080/ returns "hello world!" from helloworldcontroller. 
+
+docker compose initializes both frontend and backend, but visiting localhost:8080/sms returns error, which we couldn't solve at the moment.
+localhost:8080/ returns "hello world!" from helloworldcontroller. 

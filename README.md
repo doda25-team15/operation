@@ -15,4 +15,15 @@ https://github.com/doda25-team15/lib-version
 
 ## Run the application
 
+To run the project make sure Docker is installed. 
+
+You can run the project using docker-compose.yml file. Just go to the operation directory and write the following commands:
+
+```
+    echo github_personal_token | docker login ghcr.io -u github_username --password-stdin
+    docker compose up
+```
+
+make sure to replace github_personal_token and github_username 
+
 ## Comments

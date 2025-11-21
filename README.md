@@ -4,7 +4,7 @@ Emīls Dzintars, Frederik van der Els, Riya Gupta, Arjun Rajesh Nair, Jimmy Oei,
 
 ## Operation Repository
 
-https://github.com/doda25-team15/operation
+https://github.com/doda25-team15/operation/tree/a1
 
 **Configuration (docker-compose.yml env variables):**
 
@@ -13,7 +13,7 @@ https://github.com/doda25-team15/operation
 
 ## Model Service (Backend) Repository
 
-https://github.com/doda25-team15/model-service
+https://github.com/doda25-team15/model-service/tree/a1
 
 **Workflows**:
 
@@ -29,7 +29,7 @@ https://github.com/doda25-team15/model-service
 
 ## App (Frontend) Repository
 
-https://github.com/doda25-team15/app
+https://github.com/doda25-team15/app/tree/a1
 
 **Workflows**:
 
@@ -46,7 +46,7 @@ https://github.com/doda25-team15/app
 
 ## Lib Repository
 
-https://github.com/doda25-team15/lib-version
+https://github.com/doda25-team15/lib-version/tree/a1
 
 **Workflows**:
 
@@ -69,4 +69,6 @@ You can run the project using docker-compose.yml file. Just go to the operation 
 
 make sure to replace github_personal_token and github_username 
 
-## Comments
+## Comments for A1:
+    docker compose initializes both frontend and backend, but visiting localhost:8080/sms returns error, which we couldn't solve at the moment.
+    localhost:8080/ returns "hello world!" from helloworldcontroller. 

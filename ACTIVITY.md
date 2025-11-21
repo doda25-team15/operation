@@ -7,3 +7,6 @@
 
 - Jimmy: https://github.com/doda25-team15/model-service/pull/5, https://github.com/doda25-team15/app/pull/4
   Made the listening ports configurable through environment variables in both the model-service and app.
+
+- Arjun: Dockerized the model-service and added automatic model and preprocessor loading via volume mount or GitHub download.
+https://github.com/doda25-team15/model-service/pull/1, https://github.com/doda25-team15/model-service/pull/4

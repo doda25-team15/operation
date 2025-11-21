@@ -1,1 +1,9 @@
+### Week 1 (Nov 10-16)
 
+- Jimmy:
+  Created the organization, repositories and board for the project. Initialized the model-service repository and added a workflow for training the model.
+
+### Week 2 (Nov 17-23)
+
+- Jimmy: https://github.com/doda25-team15/model-service/pull/5, https://github.com/doda25-team15/app/pull/4
+  Made the listening ports configurable through environment variables in both the model-service and app.

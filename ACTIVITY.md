@@ -10,3 +10,6 @@
 
 - Arjun: Dockerized the model-service and added automatic model and preprocessor loading via volume mount or GitHub download.
 https://github.com/doda25-team15/model-service/pull/1, https://github.com/doda25-team15/model-service/pull/4
+
+- Frederik: https://github.com/doda25-team15/lib-version/tree/f6a07ef, https://github.com/doda25-team15/app/pull/3
+  I created the lib-version project, made it version-aware, and added a dependency on it in the app project.

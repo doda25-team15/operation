@@ -27,4 +27,4 @@ https://github.com/doda25-team15/model-service/pull/1, https://github.com/doda25
 
 - Riya: https://github.com/doda25-team15/app/pull/1, https://github.com/doda25-team15/model-service/pull/2, https://github.com/doda25-team15/model-service/pull/3, Created the image release workflow for frontend and backend, including support for multiple architectures in the container images.
 
-- Sneha: https://github.com/doda25-team15/operation/pull/19, https://github.com/doda25-team15/lib-version/pull/1 Created the docker-compose.yml file in operation repo and raised a PR for advanced versioning
+- Sneha: https://github.com/doda25-team15/operation/pull/19/commits, https://github.com/doda25-team15/lib-version/pull/1 Created the docker-compose.yml file in operation repo and raised a PR for advanced versioning

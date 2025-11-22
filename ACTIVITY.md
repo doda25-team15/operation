@@ -9,6 +9,9 @@
 - Riya:
   Updated the project template to include the frontend in the app repository and the backend in the model-service repository
 
+- Sneha:
+  Went through the repositories and ran the existing backend.
+
 ### Week 2 (Nov 17-23)
 
 - Jimmy: https://github.com/doda25-team15/model-service/pull/5, https://github.com/doda25-team15/app/pull/4
@@ -23,3 +26,5 @@ https://github.com/doda25-team15/model-service/pull/1, https://github.com/doda25
 - Emīls: https://github.com/doda25-team15/app/pull/2 , Added Dockerfile to the frontend 
 
 - Riya: https://github.com/doda25-team15/app/pull/1, https://github.com/doda25-team15/model-service/pull/2, https://github.com/doda25-team15/model-service/pull/3, Created the image release workflow for frontend and backend, including support for multiple architectures in the container images.
+
+- Sneha: https://github.com/doda25-team15/operation/pull/19, https://github.com/doda25-team15/lib-version/pull/1 Created the docker-compose.yml file in operation repo and raised a PR for advanced versioning

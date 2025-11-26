@@ -15,7 +15,7 @@ Vagrant.configure("2") do |config|
 
     ctrl.vm.provider "virtualbox" do |vb|
       vb.name = "ctrl"
-      vb.cpus = 2
+      vb.cpus = 1
       vb.memory = 4096
     end
   end

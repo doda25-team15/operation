@@ -72,7 +72,7 @@
         name: helm
         state: present
 
-    # STEP 17 — Install Helm diff plugin (Optional)
+    # STEP 17 — Install Helm diff plugin
     - name: Check if helm diff plugin is already installed
       shell: helm plugin list | grep -q diff
       register: helm_diff_check

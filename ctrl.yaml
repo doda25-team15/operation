@@ -4,7 +4,6 @@
     controller_ip: "192.168.56.100"
 
   tasks:
-
     # STEP 13 — kubeadm init
     - name: Check if Kubernetes already initialized
       stat:
@@ -18,7 +17,6 @@
         --node-name={{ inventory_hostname }}
         --pod-network-cidr=10.244.0.0/16
       when: not kubeadm_conf.stat.exists
-
 
     # STEP 14 — Configure kubectl for vagrant + export to host
     - name: Create .kube directory for vagrant
@@ -40,11 +38,11 @@
         remote_src: true
       when: not kubeadm_conf.stat.exists
 
-
     - name: Export admin.conf to host machine
       copy:
         src: /etc/kubernetes/admin.conf
         dest: /vagrant/admin.conf
+        remote_src: true
       when: not kubeadm_conf.stat.exists
 
     # STEP 15 — Apply Flannel CNI
@@ -53,3 +51,34 @@
       environment:
         KUBECONFIG: /etc/kubernetes/admin.conf
       when: not kubeadm_conf.stat.exists
+
+    # STEP 16 — Install Helm
+    - name: Add Helm GPG key
+      apt_key:
+        url: https://packages.buildkite.com/helm-linux/helm-debian/gpgkey
+        state: present
+
+    - name: Add Helm apt repository
+      apt_repository:
+        repo: "deb https://packages.buildkite.com/helm-linux/helm-debian/any/ any main"
+        state: present
+
+    - name: Update apt cache after adding Helm repository
+      apt:
+        update_cache: yes
+
+    - name: Install Helm
+      apt:
+        name: helm
+        state: present
+
+    # STEP 17 — Install Helm diff plugin (Optional)
+    - name: Check if helm diff plugin is already installed
+      shell: helm plugin list | grep -q diff
+      register: helm_diff_check
+      failed_when: false
+      changed_when: false
+
+    - name: Install helm-diff plugin
+      shell: helm plugin install https://github.com/databus23/helm-diff
+      when: helm_diff_check.rc != 0

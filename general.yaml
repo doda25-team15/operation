@@ -100,8 +100,8 @@
       - name: Install containerd and runc
         apt:
             name:
-                - containerd=1.7.24-1
-                - runc=1.1.12-1
+                - containerd
+                - runc
             state: present
             update_cache: yes
 
@@ -139,22 +139,25 @@
             mode: "0755"
 
       - name: Disable AppArmor in containerd config
-        replace:
-            path: /etc/containerd/config.toml
-            regexp: 'disable_apparmor\\s*=\\s*(true|false)'
-            replace: "disable_apparmor = true"
+        copy:
+        dest: /etc/containerd/config.toml
+        content: '{{ containerd_config.stdout
+            | regex_replace(''disable_apparmor\\s*=\\s*(true|false)'', ''disable_apparmor = true'') }}'
+        mode: "0644"
 
       - name: Update sandbox_image version
-        replace:
-            path: /etc/containerd/config.toml
-            regexp: 'sandbox_image\\s*=\\s*".*"'
-            replace: 'sandbox_image = "registry.k8s.io/pause:3.10"'
+        copy:
+        dest: /etc/containerd/config.toml
+        content: '{{ containerd_config.stdout
+            | regex_replace(''sandbox_image\\s*=\\s*".*"'', ''sandbox_image = "registry.k8s.io/pause:3.10"'') }}'
+        mode: "0644"
 
       - name: Set SystemdCgroup to true
-        replace:
-            path: /etc/containerd/config.toml
-            regexp: 'SystemdCgroup\\s*=\\s*(true|false)'
-            replace: "SystemdCgroup = true"
+        copy:
+        dest: /etc/containerd/config.toml
+        content: '{{ containerd_config.stdout
+            | regex_replace(''SystemdCgroup\\s*=\\s*(true|false)'', ''SystemdCgroup = true'') }}'
+        mode: "0644"
 
       - name: Restart containerd to apply configuration
         service:

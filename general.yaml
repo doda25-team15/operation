@@ -1,11 +1,12 @@
 ---
-- name: Add SSH keys for Vagrant user
+- name: General setup for all Kubernetes nodes
   hosts: all
   gather_facts: false
   become: true
+
   vars:
-      ssh_key_dir: "{{ playbook_dir }}/ssh-keys"
-      ssh_key_files: "{{ lookup('fileglob', ssh_key_dir + '/*.pub', wantlist=True) }}"
+    ssh_key_dir: "{{ playbook_dir }}/ssh-keys"
+    ssh_key_files: "{{ lookup('fileglob', ssh_key_dir + '/*.pub', wantlist=True) }}"
 
   tasks:
       - name: Add my personal SSH key
@@ -140,24 +141,24 @@
 
       - name: Disable AppArmor in containerd config
         copy:
-        dest: /etc/containerd/config.toml
-        content: '{{ containerd_config.stdout
+          dest: /etc/containerd/config.toml
+          content: '{{ containerd_default_config.stdout
             | regex_replace(''disable_apparmor\\s*=\\s*(true|false)'', ''disable_apparmor = true'') }}'
-        mode: "0644"
+          mode: "0644"
 
-      - name: Update sandbox_image version
+      - name: Update pause sandbox image in config.toml
         copy:
-        dest: /etc/containerd/config.toml
-        content: '{{ containerd_config.stdout
-            | regex_replace(''sandbox_image\\s*=\\s*".*"'', ''sandbox_image = "registry.k8s.io/pause:3.10"'') }}'
-        mode: "0644"
+          dest: /etc/containerd/config.toml
+          content: "{{ containerd_default_config.stdout
+            | regex_replace('sandbox_image\\s*=\\s*\".*\"', 'sandbox_image = \"registry.k8s.io/pause:3.10\"') }}"
+          mode: "0644"
 
-      - name: Set SystemdCgroup to true
+      - name: Set SystemdCgroup = true
         copy:
-        dest: /etc/containerd/config.toml
-        content: '{{ containerd_config.stdout
-            | regex_replace(''SystemdCgroup\\s*=\\s*(true|false)'', ''SystemdCgroup = true'') }}'
-        mode: "0644"
+          dest: /etc/containerd/config.toml
+          content: "{{ containerd_default_config.stdout
+            | regex_replace('SystemdCgroup\\s*=\\s*(true|false)', 'SystemdCgroup = true') }}"
+          mode: "0644"
 
       - name: Restart containerd to apply configuration
         service:

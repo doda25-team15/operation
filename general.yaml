@@ -38,7 +38,7 @@
           br_netfilter
         owner: root
         group: root
-        mode: '0644'
+        mode: "0644"
 
     - name: Load br_netfilter module now
       ansible.builtin.modprobe:
@@ -59,7 +59,7 @@
           net.ipv4.ip_forward = 1
         owner: root
         group: root
-        mode: '0644'
+        mode: "0644"
 
     - name: Apply sysctl parameters
       ansible.builtin.command: sysctl --system
@@ -70,5 +70,103 @@
         dest: /etc/hosts
         owner: root
         group: root
-        mode: '0644'
+        mode: "0644"
 
+    - name: Install apt prerequisites
+      apt:
+        name:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - gpg
+          - lsb-release
+        state: present
+        update_cache: yes
+
+    - name: Add Kubernetes apt repository GPG key
+      apt_key:
+        url: https://pkgs.k8s.io/core:/stable:/v1.32/deb/Release.key
+        state: present
+
+    - name: Add Kubernetes apt repository
+      apt_repository:
+        repo: "deb https://pkgs.k8s.io/core:/stable:/v1.32/deb/ /"
+        state: present
+
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+
+    - name: Install containerd and runc
+      apt:
+        name:
+          - containerd
+          - runc
+        state: present
+        update_cache: yes
+
+    - name: Install basic Kubernetes tools
+      apt:
+        name:
+          - kubeadm=1.32.4-1.1
+          - kubelet=1.32.4-1.1
+          - kubectl=1.32.4-1.1
+        state: present
+        update_cache: yes
+
+    - name: Hold kubeadm, kubelet and kubectl to prevent unintended upgrades
+      apt:
+        name:
+          - kubeadm
+          - kubelet
+          - kubectl
+        state: present
+      register: hold_check
+
+    - name: Mark kube packages on hold (apt-mark hold)
+      command: "apt-mark hold kubelet kubeadm kubectl"
+
+    - name: Generate default containerd config
+      command: containerd config default
+      register: containerd_default_config
+
+    - name: Ensure /etc/containerd exists
+      file:
+        path: /etc/containerd
+        state: directory
+        owner: root
+        group: root
+        mode: "0755"
+
+    - name: Disable AppArmor in containerd config
+      copy:
+      dest: /etc/containerd/config.toml
+      content: '{{ containerd_config.stdout
+        | regex_replace(''disable_apparmor\\s*=\\s*(true|false)'', ''disable_apparmor = true'') }}'
+      mode: "0644"
+
+    - name: Update sandbox_image version
+      copy:
+      dest: /etc/containerd/config.toml
+      content: '{{ containerd_config.stdout
+        | regex_replace(''sandbox_image\\s*=\\s*".*"'', ''sandbox_image = "registry.k8s.io/pause:3.10"'') }}'
+      mode: "0644"
+
+    - name: Set SystemdCgroup to true
+      copy:
+      dest: /etc/containerd/config.toml
+      content: '{{ containerd_config.stdout
+        | regex_replace(''SystemdCgroup\\s*=\\s*(true|false)'', ''SystemdCgroup = true'') }}'
+      mode: "0644"
+
+    - name: Restart containerd to apply configuration
+      service:
+        name: containerd
+        state: restarted
+        enabled: yes
+
+    - name: Ensure kubelet is enabled and started
+      service:
+        name: kubelet
+        state: started
+        enabled: yes

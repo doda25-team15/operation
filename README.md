@@ -58,18 +58,27 @@ https://github.com/doda25-team15/lib-version/tree/a1
 
 ## Run the application
 
-To run the project make sure Docker is installed. 
+To run the project make sure Docker is installed.
 
 You can run the project using docker-compose.yml file. Just go to the operation directory and write the following commands:
 
-```
-    echo github_personal_token | docker login ghcr.io -u github_username --password-stdin
-    docker compose up
+```bash
+    docker compose --env-file .env up
 ```
 
-make sure to replace github_personal_token and github_username 
+The configuration can be customized by setting the environment variables in the `.env` file.
 
 ## Comments for A1:
 
 docker compose initializes both frontend and backend, but visiting localhost:8080/sms returns error, which we couldn't solve at the moment.
-localhost:8080/ returns "hello world!" from helloworldcontroller. 
+localhost:8080/ returns "hello world!" from helloworldcontroller.
+
+# Run Vagrant
+
+To run the Vagrant setup, ensure you have Vagrant and VirtualBox installed. You can start the Vagrant environment by navigating to the operation directory and executing:
+
+```bash
+vagrant up
+```
+
+The configuration can be customized by setting the environment variables in the `.env` file.

@@ -5,9 +5,9 @@ services:
     image: ghcr.io/doda25-team15/app:latest
     container_name: app-service
     ports:
-      - ${APP_PORT}:${APP_PORT}
+      - "${APP_PORT}:${APP_PORT}"
     environment:
-      MODEL_SERVICE_URL: http://model-service:${MODEL_SERVICE_PORT}
+      MODEL_SERVICE_URL: "http://model-service:${MODEL_SERVICE_PORT}"
       PORT: ${APP_PORT}
     depends_on:
       - model-service
@@ -20,4 +20,7 @@ services:
     environment:
       PORT: ${MODEL_SERVICE_PORT}
     volumes:
-      - ${MODEL_VOLUME}:/output
+      - "volume_cache:/output"
+
+volumes:
+  volume_cache:

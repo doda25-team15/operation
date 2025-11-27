@@ -63,7 +63,7 @@ To run the project make sure Docker is installed.
 You can run the project using docker-compose.yml file. Just go to the operation directory and write the following commands:
 
 ```bash
-    docker compose --env-file .env up
+    docker compose up
 ```
 
 The configuration can be customized by setting the environment variables in the `.env` file.

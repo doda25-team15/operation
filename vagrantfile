@@ -58,12 +58,12 @@ Vagrant.configure("2") do |config|
     }
   end
 
-  config.vm.provision "ansible", run: "always" do |ansible|
+  config.vm.provision "ansible" do |ansible|
     ansible.playbook = "ctrl.yaml"
     ansible.limit = "ctrl"
   end
 
-  config.vm.provision "ansible", run: "always" do |ansible|
+  config.vm.provision "ansible" do |ansible|
     ansible.playbook = "node.yaml"
     ansible.limit = "all"  #filtered in node.yaml
   end

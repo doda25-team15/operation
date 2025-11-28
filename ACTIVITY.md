@@ -34,3 +34,6 @@ https://github.com/doda25-team15/model-service/pull/1, https://github.com/doda25
 
 - Riya: https://github.com/doda25-team15/operation/pull/40, https://github.com/doda25-team15/app/pull/8 
   Worked on steps 9-12 as part of assignment 2, updated Dockerfile for the app repository to change from gradle to maven and remove Github variables
+
+- Emīls: updated dockerfiles to use images from ghcr: https://github.com/doda25-team15/model-service/pull/6, https://github.com/doda25-team15/app/pull/9.
+  steps 1-4 from assignment 2: https://github.com/doda25-team15/operation/pull/36. 

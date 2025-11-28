@@ -6,10 +6,6 @@ Emīls Dzintars, Frederik van der Els, Riya Gupta, Arjun Rajesh Nair, Jimmy Oei,
 
 https://github.com/doda25-team15/operation/tree/a1
 
-**Configuration (docker-compose.yml env variables):**
-
-- `GITHUB_ACTOR`: GitHub actor for authentication
-- `GITHUB_TOKEN`: GitHub token for authentication
 
 ## Model Service (Backend) Repository
 

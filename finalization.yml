@@ -1,0 +1,33 @@
+---
+- hosts: all
+  vars:
+    metallb_ip_range_start: "192.168.56.90"
+    metallb_ip_range_end: "192.168.56.99"
+
+  tasks:
+    # STEP 20 — Install MetalLB
+    - name: Install MetalLB CRDs
+      command: kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.14.9/config/manifests/metallb-native.yaml
+
+    - name: Wait for MetalLB to be ready
+      command: kubectl wait -n metallb-system -l app=metallb,component=controller --for=condition=ready pod --timeout=60s
+
+    - name: Apply IPAddressPool Configuration
+      command: kubectl apply -f /vagrant/templates/metallb-ipaddresspool.yaml
+
+    - name: Apply L2Advertisement Configuration
+      command: kubectl apply -f /vagrant/templates/metallb-l2advertisement.yaml
+
+    # STEP 21 — Install Nginx Ingress Controller
+    - name: Add Nginx Ingress Helm repository
+      command: helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+
+    - name: Update Helm repositories
+      command: helm repo update
+
+    - name: Install Nginx Ingress Controller
+      command: >
+        helm upgrade --install ingress-nginx ingress-nginx/ingress-nginx
+        --namespace ingress-nginx
+        --create-namespace
+        --set controller.service.loadBalancerIP=192.168.56.90

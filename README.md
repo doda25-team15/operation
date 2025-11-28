@@ -112,6 +112,7 @@ This will:
 - Install MetalLB for load balancing (Step 20)
 - Configure IP address pool (192.168.56.90-99)
 - Install Nginx Ingress Controller (Step 21) at IP 192.168.56.90
+- Deploy Kubernetes Dashboard (Step 22)
 
 ### 4. Access the Cluster
 
@@ -124,4 +125,24 @@ kubectl get nodes
 
 # or directly:
 kubectl --kubeconfig=./admin.conf get nodes
+```
+
+### 5. Access Kubernetes Dashboard
+
+!!! NOTE step 22 is not final yet, there is some issue with authorization into the dashboard but the dashboard is deployed.
+
+You can access the Kubernetes Dashboard by navigating to the following URL in your web browser:
+
+```
+http://dashboard.192.168.56.90.nip.io
+```
+
+Use the `admin-user` ServiceAccount token to log in. You can create one token by executing the following command when ssh'd into the `ctrl`:
+
+```bash
+# ssh into ctrl
+vagrant ssh ctrl
+
+# Create token for admin-user
+kubectl -n kubernetes-dashboard create token admin-user
 ```

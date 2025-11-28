@@ -68,17 +68,81 @@ You can run the project using docker-compose.yml file. Just go to the operation 
 
 The configuration can be customized by setting the environment variables in the `.env` file.
 
-## Comments for A1:
+# Provisioning the Kubernetes Cluster
 
-docker compose initializes both frontend and backend, but visiting localhost:8080/sms returns error, which we couldn't solve at the moment.
-localhost:8080/ returns "hello world!" from helloworldcontroller.
+Ensure you have Vagrant and VirtualBox installed to do the provisioning.
+The configuration of the provisioning can be customized by setting the environment variables in the `.env` file.
 
-# Run Vagrant
+### 1. Provision VMs and Initialize Cluster
 
-To run the Vagrant setup, ensure you have Vagrant and VirtualBox installed. You can start the Vagrant environment by navigating to the operation directory and executing:
+Start the Vagrant environment to provision the controller and worker nodes:
 
 ```bash
 vagrant up
 ```
 
-The configuration can be customized by setting the environment variables in the `.env` file.
+This will:
+
+- Create the controller VM (`ctrl`) and worker VMs (`node-1`, `node-2`)
+- Run general setup (Step 1-12)
+- Initialize the Kubernetes cluster on the controller (Step 13-17)
+- Join worker nodes to the cluster (Step 18-19)
+
+### 2. Verify Cluster Status
+
+Check that all nodes have joined the cluster successfully:
+
+```bash
+vagrant ssh ctrl
+kubectl get nodes
+```
+
+You should see all nodes (`ctrl`, `node-1`, `node-2`) with status `Ready`.
+
+### 3. Finalize Cluster Setup
+
+After the VMs are provisioned and the cluster is initialized, run the `finalization.yml` playbook to install MetalLB and the Nginx Ingress Controller:
+
+```bash
+ansible-playbook -u vagrant -i 192.168.56.100, finalization.yml
+```
+
+This will:
+
+- Install MetalLB for load balancing (Step 20)
+- Configure IP address pool (192.168.56.90-99)
+- Install Nginx Ingress Controller (Step 21) at IP 192.168.56.90
+- Deploy Kubernetes Dashboard (Step 22)
+
+### 4. Access the Cluster
+
+You can now access your Kubernetes cluster from the host machine:
+
+```bash
+# Using the exported kubeconfig
+export KUBECONFIG=./admin.conf
+kubectl get nodes
+
+# or directly:
+kubectl --kubeconfig=./admin.conf get nodes
+```
+
+### 5. Access Kubernetes Dashboard
+
+!!! NOTE step 22 is not final yet, there is some issue with authorization into the dashboard but the dashboard is deployed.
+
+You can access the Kubernetes Dashboard by navigating to the following URL in your web browser:
+
+```
+http://dashboard.192.168.56.90.nip.io
+```
+
+Use the `admin-user` ServiceAccount token to log in. You can create one token by executing the following command when ssh'd into the `ctrl`:
+
+```bash
+# ssh into ctrl
+vagrant ssh ctrl
+
+# Create token for admin-user
+kubectl -n kubernetes-dashboard create token admin-user
+```

@@ -47,7 +47,7 @@
 
     # STEP 15 — Apply Flannel CNI
     - name: Install Flannel CNI
-      command: kubectl apply -f /vagrant/templates/flannel.yaml
+      command: kubectl apply -f /vagrant/templates/kube-flannel.yml
       environment:
         KUBECONFIG: /etc/kubernetes/admin.conf
       when: not kubeadm_conf.stat.exists

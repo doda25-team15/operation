@@ -1,0 +1,47 @@
+---
+- hosts: all
+  vars:
+    metallb_ip_range_start: "192.168.56.90"
+    metallb_ip_range_end: "192.168.56.99"
+
+  tasks:
+    # STEP 20 — Install MetalLB
+    - name: Install MetalLB CRDs
+      command: kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.14.9/config/manifests/metallb-native.yaml
+
+    - name: Wait for MetalLB to be ready
+      command: kubectl wait -n metallb-system -l app=metallb,component=controller --for=condition=ready pod --timeout=60s
+
+    - name: Apply
+      command: kubectl apply -f /vagrant/templates/metallb.yaml
+
+    # STEP 21 — Install Nginx Ingress Controller
+    - name: Add Nginx Ingress Helm repository
+      command: helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+
+    - name: Update Helm repositories
+      command: helm repo update
+
+    - name: Install Nginx Ingress Controller
+      command: >
+        helm upgrade --install ingress-nginx ingress-nginx/ingress-nginx
+        --namespace ingress-nginx
+        --create-namespace
+        --set controller.service.loadBalancerIP=192.168.56.90
+        --set controller.allowSnippetAnnotations=true
+
+    # STEP 22 — Install Kubernetes Dashboard
+    - name: Add Kubernetes Dashboard Helm repository
+      command: helm repo add kubernetes-dashboard https://kubernetes.github.io/dashboard/
+
+    - name: Update Helm repositories for Dashboard
+      command: helm repo update
+
+    - name: Install Kubernetes Dashboard
+      command: >
+        helm upgrade --install kubernetes-dashboard kubernetes-dashboard/kubernetes-dashboard
+        --namespace kubernetes-dashboard
+        --create-namespace
+
+    - name: Apply Kubernetes Dashboard Configuration
+      command: kubectl apply -f /vagrant/templates/kubernetes-dashboard.yaml

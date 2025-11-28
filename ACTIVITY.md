@@ -25,6 +25,12 @@ https://github.com/doda25-team15/model-service/pull/1, https://github.com/doda25
 
 - Emīls: https://github.com/doda25-team15/app/pull/2 , Added Dockerfile to the frontend 
 
-- Riya: https://github.com/doda25-team15/app/pull/1, https://github.com/doda25-team15/model-service/pull/2, https://github.com/doda25-team15/model-service/pull/3, Created the image release workflow for frontend and backend, including support for multiple architectures in the container images.
+- Riya: https://github.com/doda25-team15/app/pull/1, https://github.com/doda25-team15/model-service/pull/2, https://github.com/doda25-team15/model-service/pull/3 
+  Created the image release workflow for frontend and backend, including support for multiple architectures in the container images.
 
 - Sneha: https://github.com/doda25-team15/operation/pull/19/commits, https://github.com/doda25-team15/lib-version/pull/1 Created the docker-compose.yml file in operation repo and raised a PR for advanced versioning
+
+### Week 2 (Nov 24-30)
+
+- Riya: https://github.com/doda25-team15/operation/pull/40, https://github.com/doda25-team15/app/pull/8 
+  Worked on steps 9-12 as part of assignment 2, updated Dockerfile for the app repository to change from gradle to maven and remove Github variables

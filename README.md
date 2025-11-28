@@ -4,12 +4,12 @@ Emīls Dzintars, Frederik van der Els, Riya Gupta, Arjun Rajesh Nair, Jimmy Oei,
 
 ## Operation Repository
 
-https://github.com/doda25-team15/operation/tree/a1
+https://github.com/doda25-team15/operation/tree/a2
 
 
 ## Model Service (Backend) Repository
 
-https://github.com/doda25-team15/model-service/tree/a1
+https://github.com/doda25-team15/model-service/tree/a2
 
 **Workflows**:
 
@@ -25,7 +25,7 @@ https://github.com/doda25-team15/model-service/tree/a1
 
 ## App (Frontend) Repository
 
-https://github.com/doda25-team15/app/tree/a1
+https://github.com/doda25-team15/app/tree/a2
 
 **Workflows**:
 
@@ -42,7 +42,7 @@ https://github.com/doda25-team15/app/tree/a1
 
 ## Lib Repository
 
-https://github.com/doda25-team15/lib-version/tree/a1
+https://github.com/doda25-team15/lib-version/tree/a2
 
 **Workflows**:
 

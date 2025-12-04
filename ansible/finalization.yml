@@ -13,7 +13,7 @@
       command: kubectl wait -n metallb-system -l app=metallb,component=controller --for=condition=ready pod --timeout=60s
 
     - name: Apply
-      command: kubectl apply -f /vagrant/templates/metallb.yaml
+      command: kubectl apply -f /vagrant/ansible/templates/metallb.yaml
 
     # STEP 21 — Install Nginx Ingress Controller
     - name: Add Nginx Ingress Helm repository
@@ -44,4 +44,4 @@
         --create-namespace
 
     - name: Apply Kubernetes Dashboard Configuration
-      command: kubectl apply -f /vagrant/templates/kubernetes-dashboard.yaml
+      command: kubectl apply -f /vagrant/ansible/templates/kubernetes-dashboard.yaml

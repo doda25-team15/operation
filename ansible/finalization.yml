@@ -6,8 +6,11 @@
 
   tasks:
     # STEP 20 — Install MetalLB
-    - name: Install MetalLB CRDs
-      command: kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.14.9/config/manifests/metallb-native.yaml
+    - name: Apply MetalLB native CRD
+      kubernetes.core.k8s:
+        state: present
+        kubeconfig: "{{ kubeconfig_path }}"
+        src: /vagrant/templates/metallb-native.yaml
 
     - name: Wait for MetalLB to be ready
       command: kubectl wait -n metallb-system -l app=metallb,component=controller --for=condition=ready pod --timeout=60s
@@ -28,7 +31,7 @@
         --namespace ingress-nginx
         --create-namespace
         --set controller.service.loadBalancerIP=192.168.56.90
-        --set controller.allowSnippetAnnotations=true
+        --set controller.admissionWebhooks.enabled=false
 
     # STEP 22 — Install Kubernetes Dashboard
     - name: Add Kubernetes Dashboard Helm repository

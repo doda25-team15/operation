@@ -58,4 +58,6 @@
 
 - Frederik: https://github.com/doda25-team15/app/pull/6, https://github.com/doda25-team15/app/pull/7, https://github.com/doda25-team15/app/pull/11, https://github.com/doda25-team15/operation/pull/64
 
+- Sneha: https://github.com/doda25-team15/lib-version/pull/1 was merged, https://github.com/doda25-team15/operation/pull/48 
+
   Implemented the migration from Gradle to Maven, fixed a bug with the SMS endpoint, migrated the building process from the Dockerfile to the workflow (after first fixing many existing bugs), made image dependencies fixed (no `:latest`).

@@ -142,3 +142,21 @@ vagrant ssh ctrl
 # Create token for admin-user
 kubectl -n kubernetes-dashboard create token admin-user
 ```
+
+Currently metalLB is not working. To see website port-forwarding is required:
+
+```bash
+kubectl expose deployment app-service \
+  --type=NodePort \
+  --name=app-np \
+  --port=8080
+
+kubectl get svc app-np
+
+#you will get something like
+8080:3xxxx/TCP
+#copy 3xxxx
+
+```
+
+write in the browser http://192.168.56.100:<3xxxx>

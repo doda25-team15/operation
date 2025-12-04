@@ -88,3 +88,4 @@
       environment:
         KUBECONFIG: /etc/kubernetes/admin.conf
       when: not kubeadm_conf.stat.exists
+    

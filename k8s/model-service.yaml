@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: model-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: sms-checker     
+      component: model-service
+  template:
+    metadata:
+      labels:
+        app: sms-checker      
+        component: model-service
+    spec:
+      containers:
+      - name: model
+        image: ghcr.io/doda25-team15/model-service:v1.0.2
+        ports:
+        - containerPort: 8081
+        envFrom:
+          - secretRef:
+              name: app-secrets
+        volumeMounts:
+          - name: volume-cache
+            mountPath: /output
+      volumes:
+        - name: volume-cache
+          hostPath:
+            path: /mnt/shared/output
+            type: DirectoryOrCreate
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: model-service
+spec:
+  selector:
+    app: sms-checker      
+    component: model-service
+  ports:
+    - port: 8081
+      targetPort: 8081
+  type: ClusterIP

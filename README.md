@@ -160,3 +160,156 @@ kubectl get svc app-np
 ```
 
 write in the browser http://192.168.56.100:<3xxxx>
+
+---
+# Kubernetes Cluster Deployment
+
+## Prerequisites
+- kubectl
+- minikube
+- helm 3.x
+- Docker running locally
+- Nginx Ingress Controller
+
+## Start Kubernetes Cluster
+
+Start cluster:
+```
+minikube start --driver=docker
+```
+
+Enable Ingress:
+```
+minikube addons enable ingress
+```
+
+Wait for Ingress Controller:
+```
+kubectl wait --namespace ingress-nginx \
+  --for=condition=ready pod \
+  --selector=app.kubernetes.io/component=controller \
+  --timeout=120s
+```
+
+## Deploy Using Kubernetes Manifests (k8s)
+
+```
+kubectl apply -f k8s -R
+```
+
+To verify:
+```
+kubectl get pods
+kubectl get svc
+kubectl get ingress
+```
+
+## Access Application
+
+Add hostname:
+```
+echo "127.0.0.1 sms-checker-app" | sudo tee -a /etc/hosts
+```
+
+Port-forward Ingress Controller:
+```
+kubectl port-forward -n ingress-nginx \
+  service/ingress-nginx-controller 8080:80
+```
+
+Open in browser:
+```
+http://sms-checker-app:8080/sms/
+```
+
+## Deployment using Helm
+
+Install with Helm:
+```
+cd helm_chart
+helm install sms-checker .
+```
+
+Check release:
+```
+helm status sms-checker
+kubectl get all
+```
+
+Open in browser:
+```
+http://sms-checker-app:8080/sms/
+```
+
+## Customise Helm Deployment
+
+### Examples
+
+Change number of replicas:
+```
+helm install sms-checker . --set replicaCount.app=5
+```
+
+Change Ingress hostname:
+```
+helm install sms-checker . --set ingress.host=myapp.local
+```
+
+Inject SMTP Credentials:
+```
+helm install sms-checker . \
+  --set secret.smtpUser="abc@mail" \
+  --set secret.smtpPass="secret"
+```
+
+Disable Ingress:
+```
+helm install sms-checker . --set ingress.enabled=false
+```
+
+**Verify changes:**
+```
+# Check replica count
+kubectl get pods -l component=app
+# Check hostname    
+kubectl get ingress app-ingress -o jsonpath='{.spec.rules[0].host}'
+```
+
+## Testing the Deployment
+
+Check pods:
+```
+kubectl get pods
+```
+
+Tail logs:
+```
+kubectl logs -l app=sms-checker
+```
+
+Verify ConfigMap is mounted:
+```
+kubectl exec deploy/app-deployment -- env | grep MODEL_HOST
+```
+
+Verify Ingress:
+```
+kubectl describe ingress
+```
+
+## Additional Functionality
+
+Upgrade:
+```
+helm upgrade sms-checker .
+```
+
+Rollback:
+```
+helm rollback sms-checker
+```
+
+Uninstall:
+```
+helm uninstall sms-checker
+```

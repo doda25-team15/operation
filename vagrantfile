@@ -12,7 +12,7 @@ end
 
 # Get configuration from environment variables with defaults
 IMAGE_NAME = ENV['IMAGE_NAME'] || "bento/ubuntu-24.04"
-WORKER_COUNT = (ENV['WORKER_COUNT'] || 1).to_i
+WORKER_COUNT = (ENV['WORKER_COUNT'] || 2).to_i
 CTRL_CPU = (ENV['CTRL_CPU'] || 2).to_i
 CTRL_MEMORY = (ENV['CTRL_MEMORY'] || 4096).to_i
 WORKER_CPU = (ENV['WORKER_CPU'] || 2).to_i

@@ -1,0 +1,9 @@
+apiVersion: v2
+name: SMS-Checker-Kubernetes-App
+description: Helm chart for Kubernetes
+type: application
+version: 1.0.0
+appVersion: "1.0"
+dependencies: []
+
+home: https://github.com/doda25-team15/operation

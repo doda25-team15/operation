@@ -1,0 +1,82 @@
+
+-------------------------------------------------------------------------------
+SMS Checker - Deployment Complete
+-------------------------------------------------------------------------------
+
+Release Name:   {{ .Release.Name }}
+Namespace:      {{ .Release.Namespace }}
+Chart Version:  {{ .Chart.Version }}
+App Version:    {{ .Chart.AppVersion }}
+
+-------------------------------------------------------------------------------
+DEPLOYED COMPONENTS
+-------------------------------------------------------------------------------
+
+App:
+  - Deployment: {{ .Values.labels.app.name }}-deployment ({{ .Values.replicaCount.app }} replicas)
+  - Service:    {{ .Values.service.app.name }} ({{ .Values.service.type }})
+
+Model Service:
+  - Deployment: {{ .Values.labels.model.name }}-deployment ({{ .Values.replicaCount.model }} replicas)
+  - Service:    {{ .Values.service.model.name }} ({{ .Values.service.type }})
+
+{{- if .Values.ingress.enabled }}
+Ingress:
+  - Name: {{ .Values.ingress.name }}
+  - Host: {{ .Values.ingress.host }}
+{{- end }}
+
+-------------------------------------------------------------------------------
+ACCESS APPLICATION
+-------------------------------------------------------------------------------
+
+{{- if .Values.ingress.enabled }}
+1. Add hostname to /etc/hosts:
+   echo "127.0.0.1 {{ .Values.ingress.host }}" | sudo tee -a /etc/hosts
+
+2. Port-forward the Ingress Controller:
+   kubectl port-forward -n ingress-nginx service/ingress-nginx-controller 8080:80
+
+3. Access the application:
+   http://{{ .Values.ingress.host }}:8080/sms/
+
+{{- else }}
+Ingress is disabled. Access via port-forward:
+   kubectl port-forward service/{{ .Values.service.app.name }} 8080:{{ .Values.service.app.port }}
+   http://localhost:8080/sms/
+{{- end }}
+
+-------------------------------------------------------------------------------
+MANAGEMENT COMMANDS
+-------------------------------------------------------------------------------
+
+View status:
+  helm status {{ .Release.Name }}
+
+View resources:
+  kubectl get all -l release={{ .Release.Name }}
+
+Upgrade deployment:
+  helm upgrade {{ .Release.Name }} ./helm-chart
+
+Rollback to previous version:
+  helm rollback {{ .Release.Name }}
+
+Uninstall:
+  helm uninstall {{ .Release.Name }}
+
+-------------------------------------------------------------------------------
+TROUBLESHOOTING
+-------------------------------------------------------------------------------
+
+Check pod status:
+  kubectl get pods -l app={{ .Values.labels.app.app }}
+
+View pod logs:
+  kubectl logs -l app={{ .Values.labels.app.app }} --tail=50
+
+Describe resources:
+  kubectl describe deployment {{ .Values.labels.app.name }}-deployment
+
+
+For more information, see: helm_chart/README.md

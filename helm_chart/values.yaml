@@ -37,7 +37,7 @@ ingress:
     name: ingress
     className: nginx
     annotations: {}
-    host: sms-checker.local
+    host: sms-checker-app
 
 volume:
     name: volume-cache

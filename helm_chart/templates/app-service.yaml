@@ -9,7 +9,7 @@ metadata:
     release: {{ .Release.Name }}
 spec:
   selector:
-    pp: {{ .Values.labels.app.app }}
+    app: {{ .Values.labels.app.app }}
     component: {{ .Values.labels.app.component }}
   ports:
     - port: {{ .Values.service.app.port }}

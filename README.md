@@ -208,7 +208,7 @@ kubectl get ingress
 
 Add hostname:
 ```
-echo "127.0.0.1 sms-checker.local" | sudo tee -a /etc/hosts
+echo "127.0.0.1 sms-checker-app" | sudo tee -a /etc/hosts
 ```
 
 Port-forward Ingress Controller:
@@ -219,7 +219,7 @@ kubectl port-forward -n ingress-nginx \
 
 Open in browser:
 ```
-http://sms-checker.local:8080/sms/
+http://sms-checker-app:8080/sms/
 ```
 
 ## Deployment using Helm
@@ -234,6 +234,11 @@ Check release:
 ```
 helm status sms-checker
 kubectl get all
+```
+
+Open in browser:
+```
+http://sms-checker-app:8080/sms/
 ```
 
 ## Customise Helm Deployment

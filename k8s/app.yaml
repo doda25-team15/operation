@@ -52,7 +52,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-  - host: sms-checker.local
+  - host: sms-checker-app
     http:
       paths:
       - path: /

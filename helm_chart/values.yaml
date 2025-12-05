@@ -63,4 +63,10 @@ monitoring:
           team: doda25-team15
 
   grafana:
-    enabled: true         
+    enabled: true
+    sidecar:
+      dashboards:
+        enabled: true
+        label: grafana_dashboard
+        labelValue: "1"
+        searchNamespace: ALL

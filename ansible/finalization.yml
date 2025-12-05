@@ -3,14 +3,22 @@
   vars:
     metallb_ip_range_start: "192.168.56.90"
     metallb_ip_range_end: "192.168.56.99"
+    kubeconfig_path: "/home/vagrant/.kube/config"
 
   tasks:
+    - name: Install python3-kubernetes library
+      apt:
+        name: python3-kubernetes
+        state: present
+        update_cache: yes
+      become: yes
+
     # STEP 20 — Install MetalLB
     - name: Apply MetalLB native CRD
       kubernetes.core.k8s:
         state: present
         kubeconfig: "{{ kubeconfig_path }}"
-        src: /vagrant/templates/metallb-native.yaml
+        src: /vagrant/ansible/templates/metallb-native.yaml
 
     - name: Wait for MetalLB to be ready
       command: kubectl wait -n metallb-system -l app=metallb,component=controller --for=condition=ready pod --timeout=60s
@@ -48,3 +56,48 @@
 
     - name: Apply Kubernetes Dashboard Configuration
       command: kubectl apply -f /vagrant/ansible/templates/kubernetes-dashboard.yaml
+
+    # STEP 23 — Install Istio 1.25.2
+
+    - name: Download Istio 1.25.2
+      unarchive:
+        src: "https://github.com/istio/istio/releases/download/1.25.2/istio-1.25.2-linux-{{ 'arm64' if ansible_architecture == 'aarch64' else 'amd64' }}.tar.gz"
+        dest: /home/vagrant
+        remote_src: yes
+        owner: vagrant
+        group: vagrant
+      become: yes
+
+    - name: Ensure Istio directory ownership
+      file:
+        path: /home/vagrant/istio-1.25.2
+        owner: vagrant
+        group: vagrant
+        recurse: yes
+      become: yes
+
+    - name: Apply IstioOperator with MetalLB static IP
+      copy:
+        dest: /home/vagrant/istio-operator.yaml
+        content: |
+          apiVersion: install.istio.io/v1alpha1
+          kind: IstioOperator
+          spec:
+            profile: default
+            components:
+              ingressGateways:
+                - name: istio-ingressgateway
+                  enabled: true
+                  k8s:
+                    service:
+                      type: LoadBalancer
+                      loadBalancerIP: 192.168.56.91
+            meshConfig:
+              accessLogFile: /dev/stdout
+
+    - name: Install Istio using istioctl
+      command: /home/vagrant/istio-1.25.2/bin/istioctl install -y -f /home/vagrant/istio-operator.yaml
+      environment:
+        KUBECONFIG: /home/vagrant/.kube/config
+
+

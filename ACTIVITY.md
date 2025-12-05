@@ -65,6 +65,9 @@
 - Arjun: https://github.com/doda25-team15/operation/pull/37
 Implemented the steps 5-8 from the assignment 2 and did some code reviews.
   
+### Week 4 (Dec 1-7)
 
+- Arjun: https://github.com/doda25-team15/operation/pull/68
+  Fixed the error of gaining authorization into Kubernetes Dashboard. Installed Istio (v1.25.2) by downloading it, adding istioctl to PATH, and running the Istio installation for service-mesh support.
   
 

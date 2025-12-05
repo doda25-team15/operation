@@ -82,3 +82,10 @@
     - name: Install helm-diff plugin
       shell: helm plugin install https://github.com/databus23/helm-diff
       when: helm_diff_check.rc != 0
+
+    - name: Apply application manifests
+      shell: kubectl apply -f /vagrant/k8s/
+      environment:
+        KUBECONFIG: /etc/kubernetes/admin.conf
+      when: not kubeadm_conf.stat.exists
+    

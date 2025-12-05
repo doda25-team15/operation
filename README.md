@@ -4,12 +4,11 @@ Emīls Dzintars, Frederik van der Els, Riya Gupta, Arjun Rajesh Nair, Jimmy Oei,
 
 ## Operation Repository
 
-https://github.com/doda25-team15/operation/tree/a2
+https://github.com/doda25-team15/operation/tree/a3
 
 ## Model Service (Backend) Repository
 
-https://github.com/doda25-team15/model-service/tree/a2
-
+https://github.com/doda25-team15/model-service/tree/a3
 **Workflows**:
 
 - Release workflow: workflow consisting of two jobs: training the model and releasing the Docker image for the model-service.
@@ -24,7 +23,7 @@ https://github.com/doda25-team15/model-service/tree/a2
 
 ## App (Frontend) Repository
 
-https://github.com/doda25-team15/app/tree/a2
+https://github.com/doda25-team15/app/tree/a3
 
 **Workflows**:
 
@@ -41,7 +40,7 @@ https://github.com/doda25-team15/app/tree/a2
 
 ## Lib Repository
 
-https://github.com/doda25-team15/lib-version/tree/a2
+https://github.com/doda25-team15/lib-version/tree/a3
 
 **Workflows**:
 

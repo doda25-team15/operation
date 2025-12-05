@@ -36,7 +36,6 @@ ingress:
     enabled: true
     name: ingress
     className: nginx
-    annotations: {}
     host: sms-checker-app
 
 volume:

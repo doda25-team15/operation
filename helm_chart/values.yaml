@@ -1,0 +1,56 @@
+replicaCount:
+    app: 2
+    model: 2
+
+labels:
+    app:
+        name: app
+        component: app
+        app: sms-checker
+    model:
+        name: model-service
+        app: model-service
+
+image:
+    app:
+        repository: ghcr.io/doda25-team15/app
+        tag: v1.0.6
+        pullPolicy: IfNotPresent
+    model:
+        repository: ghcr.io/doda25-team15/model-service
+        tag: v1.0.2
+        pullPolicy: IfNotPresent
+
+service:
+    type: ClusterIP
+    app:
+        name: app-service
+        port: 8080
+        targetPort: 8080
+    model:
+        name: model-service
+        port: 8081
+        targetPort: 8081
+
+ingress:
+    enabled: true
+    name: ingress
+    className: nginx
+    annotations: {}
+    host: sms-checker.local
+
+volume:
+    name: volume-cache
+    hostPath: /mnt/shared/output
+
+volumeMounts:
+    name: volume-cache
+    mountPath: /output
+
+configMap:
+  name: env-config-map
+
+secret:
+  name: secret
+  smtpUser: "user"
+  smtpPass: "password"

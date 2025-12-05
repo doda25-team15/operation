@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-deployment
+  labels:
+    app: sms-checker
+    component: app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: sms-checker
+      component: app
+  template:
+    metadata:
+      labels:
+        app: sms-checker
+        component: app
+    spec:
+      containers:
+      - name: app
+        image: ghcr.io/doda25-team15/app:v1.0.6
+        ports:
+        - containerPort: 8080
+        envFrom:
+          - configMapRef:
+              name: env-config-map
+---
+apiVersion: v1
+kind: Service
+metadata: 
+  name: app-service
+  labels:
+    app: sms-checker
+    component: app
+spec:
+  selector:
+    app: sms-checker
+    component: app
+  ports:
+    - port: 8080
+      targetPort: 8080
+  type: ClusterIP
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress
+  labels:
+    app: sms-checker
+    component: app
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: sms-checker.local
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: app-service
+            port:
+              number: 8080

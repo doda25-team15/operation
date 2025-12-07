@@ -336,6 +336,52 @@ Uninstall:
 helm uninstall sms-checker
 ```
 
+## Prometheus Monitoring
+
+We use Prometheus from the kube-prometheus-stack Helm chart to automatically collect metrics from the app and model services via ServiceMonitor resources defined in this chart. Install Prometheus stack from the operation repository (with KUBECONFIG=./admin.conf pointing to the cluster):
+
+```bash
+# Ensure the Helm repo is added
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm repo update
+
+# Install kube-prometheus-stack into the same namespace as the app
+helm install monitoring prometheus-community/kube-prometheus-stack \
+  --namespace sms-checker \
+  --create-namespace
+```
+
+This installs:
+Prometheus
+Alertmanager
+node-exporter, kube-state-metrics, etc.
+The CRDs needed for ServiceMonitor, PrometheusRule, etc.
+The app and model services are annotated with labels and have corresponding ServiceMonitor objects, so Prometheus automatically discovers and scrapes their /metrics endpoints.
+
+Check that Prometheus sees the app
+1. Find the Prometheus service:
+
+```bash
+kubectl get svc -n sms-checker | grep prometheus
+```
+
+2. Port-forward it (replace <prometheus-service-name> with the name from above):
+   
+```bash
+kubectl port-forward -n sms-checker svc/<prometheus-service-name> 9090:9090
+```
+
+3. Open Prometheus in your browser:
+
+```bash
+[kubectl port-forward -n sms-checker svc/<prometheus-service-name> 9090:9090](http://localhost:9090
+)
+```
+
+4. Go to Status → Target health and confirm that the targets created by the ServiceMonitors are UP (job names containing sms-checker).
+5. In the Query tab, type one of the custom metric names used by the app (for example, a counter/gauge/histogram metric defined in the app repo) and click Execute to see the time series collected by Prometheus.
+
+
 ## Grafana Dashboards
 
 After installation, access Grafana:

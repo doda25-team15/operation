@@ -73,3 +73,7 @@ Implemented the steps 5-8 from the assignment 2 and did some code reviews.
 - Riya: https://github.com/doda25-team15/operation/pull/69
 
   Updated the application to run Kubernetes deployment using minikube and kubectl. Created Helm Chart and its deployment configuration.
+
+- Frederik: https://github.com/doda25-team15/model-service/pull/8
+
+  Moved training of model outside `docker run`.

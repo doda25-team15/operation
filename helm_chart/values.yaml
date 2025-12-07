@@ -56,15 +56,17 @@ secret:
   smtpPass: "password"
 
 monitoring:
-  enabled: true
-
-kube-prometheus-stack:
   prometheus:
     prometheusSpec:
       serviceMonitorSelector:
         matchLabels:
-          app.kubernetes.io/managed-by: sms-checker
+          team: doda25-team15
+
   grafana:
-    enabled: false 
-  alertmanager:
-    enabled: false    
+    enabled: true
+    sidecar:
+      dashboards:
+        enabled: true
+        label: grafana_dashboard
+        labelValue: "1"
+        searchNamespace: ALL

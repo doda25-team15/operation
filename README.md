@@ -374,8 +374,7 @@ kubectl port-forward -n sms-checker svc/<prometheus-service-name> 9090:9090
 3. Open Prometheus in your browser:
 
 ```bash
-[kubectl port-forward -n sms-checker svc/<prometheus-service-name> 9090:9090](http://localhost:9090
-)
+http://localhost:9090
 ```
 
 4. Go to Status → Target health and confirm that the targets created by the ServiceMonitors are UP (job names containing sms-checker).

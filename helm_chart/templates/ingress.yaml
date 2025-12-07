@@ -8,27 +8,25 @@ metadata:
     component: {{ .Values.labels.app.component }}
     chart: {{ .Chart.Name }}-{{ .Chart.Version }}
     release: {{ .Release.Name }}
-  annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   ingressClassName: {{ .Values.ingress.className }}
   rules:
-  - host: {{ .Values.ingress.host }}
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: {{ .Values.service.app.name }}
-            port:
-              number: {{ .Values.service.app.port }}
-      - path: /metrics
-        pathType: Prefix
-        backend:
-          service:
-            name: {{ .Values.service.app.name }}
-            port:
-              number: {{ .Values.service.app.port }}
-        
+    - host: {{ .Values.ingress.host }}
+      http:
+        paths:
+          - path: /sms
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ .Values.service.app.name }}
+                port:
+                  number: {{ .Values.service.app.port }}
+
+          - path: /metrics
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ .Values.service.app.name }}
+                port:
+                  number: {{ .Values.service.app.port }}
 {{- end }}

@@ -8,8 +8,6 @@ metadata:
     component: {{ .Values.labels.app.component }}
     chart: {{ .Chart.Name }}-{{ .Chart.Version }}
     release: {{ .Release.Name }}
-  annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   ingressClassName: {{ .Values.ingress.className }}
   rules:

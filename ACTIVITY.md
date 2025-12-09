@@ -58,18 +58,17 @@
 
 - Frederik: https://github.com/doda25-team15/app/pull/6, https://github.com/doda25-team15/app/pull/7, https://github.com/doda25-team15/app/pull/11, https://github.com/doda25-team15/operation/pull/64
 
-- Sneha: https://github.com/doda25-team15/lib-version/pull/1 was merged, https://github.com/doda25-team15/operation/pull/48 
+- Sneha: https://github.com/doda25-team15/lib-version/pull/1 was merged, https://github.com/doda25-team15/operation/pull/48
 
   Implemented the migration from Gradle to Maven, fixed a bug with the SMS endpoint, migrated the building process from the Dockerfile to the workflow (after first fixing many existing bugs), made image dependencies fixed (no `:latest`).
 
 - Arjun: https://github.com/doda25-team15/operation/pull/37
-Implemented the steps 5-8 from the assignment 2 and did some code reviews.
-  
+  Implemented the steps 5-8 from the assignment 2 and did some code reviews.
+
 ### Week 4 (Dec 1-7)
 
 - Arjun: https://github.com/doda25-team15/operation/pull/68
   Fixed the error of gaining authorization into Kubernetes Dashboard. Installed Istio (v1.25.2) by downloading it, adding istioctl to PATH, and running the Istio installation for service-mesh support.
-  
 - Riya: https://github.com/doda25-team15/operation/pull/69
 
   Updated the application to run Kubernetes deployment using minikube and kubectl. Created Helm Chart and its deployment configuration.
@@ -79,3 +78,7 @@ Implemented the steps 5-8 from the assignment 2 and did some code reviews.
 - Sneha: https://github.com/doda25-team15/app/pull/12, https://github.com/doda25-team15/operation/pull/74
 
   Moved training of model outside `docker run`.
+
+- Jimmy: https://github.com/doda25-team15/operation/pull/72
+
+  Worked on start of Grafana dashboards.

@@ -79,6 +79,10 @@
 
 - Sneha: https://github.com/doda25-team15/app/pull/12, https://github.com/doda25-team15/operation/pull/74
 
+- Emīls: https://github.com/doda25-team15/operation/pull/67
+
+  Migrate from Docker Compose to Kubernetes
+
 - Jimmy: https://github.com/doda25-team15/operation/pull/72
 
   Worked on start of Grafana dashboards.

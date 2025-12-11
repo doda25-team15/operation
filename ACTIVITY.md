@@ -75,9 +75,13 @@
 
 - Frederik: https://github.com/doda25-team15/model-service/pull/8
 
+  Moved training of model outside `docker run`.
+
 - Sneha: https://github.com/doda25-team15/app/pull/12, https://github.com/doda25-team15/operation/pull/74
 
-  Moved training of model outside `docker run`.
+- Emīls: https://github.com/doda25-team15/operation/pull/67
+
+  Migrate from Docker Compose to Kubernetes
 
 - Jimmy: https://github.com/doda25-team15/operation/pull/72
 

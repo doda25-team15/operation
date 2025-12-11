@@ -19,7 +19,7 @@ https://github.com/doda25-team15/model-service/tree/a3
 
 **Notes**:
 
-- The service expects the model to be mounted at `/output`, but if not found there, it will download it from GitHub Releases.
+- The service expects the model files to be available at `/app/output`, which is mounted from the host's `/mnt/shared/output` directory. If not found there, it will attempt to download them from GitHub Releases.
 
 ## App (Frontend) Repository
 
@@ -194,6 +194,34 @@ kubectl wait --namespace ingress-nginx \
   --timeout=120s
 ```
 
+## Setup Model Files Volume Mount
+
+The model-service requires trained model files (`model.joblib` and `preprocessor.joblib`). These files need to be available in the shared volume before deploying the application.
+
+**Setup steps for minikube:**
+
+1. Get the model files. You can either train the model yourself, or download a trained model form the GitHub Releases page https://github.com/doda25-team15/model-service/releases.
+
+2. Create the shared volume directory in minikube:
+
+```bash
+minikube ssh "sudo mkdir -p /mnt/shared/output"
+```
+
+3. Copy the model files to minikube:
+
+```bash
+minikube cp <path to model files on your system>/model.joblib /mnt/shared/output/model.joblib
+
+minikube cp <path to model files on your system>/preprocessor.joblib /mnt/shared/output/preprocessor.joblib
+```
+
+4. Verify the files are present:
+
+```bash
+minikube ssh "ls -lh /mnt/shared/output/"
+```
+
 ## Deploy Using Kubernetes Manifests (k8s)
 
 ```
@@ -359,6 +387,7 @@ The CRDs needed for ServiceMonitor, PrometheusRule, etc.
 The app and model services are annotated with labels and have corresponding ServiceMonitor objects, so Prometheus automatically discovers and scrapes their /metrics endpoints.
 
 Check that Prometheus sees the app
+
 1. Find the Prometheus service:
 
 ```bash
@@ -366,7 +395,7 @@ kubectl get svc -n sms-checker | grep prometheus
 ```
 
 2. Port-forward it (replace <prometheus-service-name> with the name from above):
-   
+
 ```bash
 kubectl port-forward -n sms-checker svc/<prometheus-service-name> 9090:9090
 ```
@@ -379,7 +408,6 @@ http://localhost:9090
 
 4. Go to Status → Target health and confirm that the targets created by the ServiceMonitors are UP (job names containing sms-checker).
 5. In the Query tab, type one of the custom metric names used by the app (for example, a counter/gauge/histogram metric defined in the app repo) and click Execute to see the time series collected by Prometheus.
-
 
 ## Grafana Dashboards
 

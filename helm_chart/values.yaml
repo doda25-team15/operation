@@ -45,7 +45,7 @@ volume:
 
 volumeMounts:
     name: volume-cache
-    mountPath: /output
+    mountPath: /app/output
 
 configMap:
   name: env-config-map

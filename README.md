@@ -224,13 +224,13 @@ minikube ssh "ls -lh /mnt/shared/output/"
 
 ## Deploy Using Kubernetes Manifests (k8s)
 
-```
+```bash
 kubectl apply -f k8s -R
 ```
 
 To verify:
 
-```
+```bash
 kubectl get pods
 kubectl get svc
 kubectl get ingress
@@ -240,20 +240,20 @@ kubectl get ingress
 
 Add hostname:
 
-```
+```bash
 echo "127.0.0.1 sms-checker-app" | sudo tee -a /etc/hosts
 ```
 
-Port-forward Ingress Controller:
+Port-forward Ingress Controller using kubectl:
 
-```
+```bash
 kubectl port-forward -n ingress-nginx \
   service/ingress-nginx-controller 8080:80
 ```
 
 Open in browser:
 
-```
+```bash
 http://sms-checker-app:8080/sms/
 ```
 
@@ -261,21 +261,21 @@ http://sms-checker-app:8080/sms/
 
 Install with Helm:
 
-```
+```bash
 cd helm_chart
 helm install sms-checker .
 ```
 
 Check release:
 
-```
+```bash
 helm status sms-checker
 kubectl get all
 ```
 
 Open in browser:
 
-```
+```bash
 http://sms-checker-app:8080/sms/
 ```
 
@@ -366,48 +366,26 @@ helm uninstall sms-checker
 
 ## Prometheus Monitoring
 
-We use Prometheus from the kube-prometheus-stack Helm chart to automatically collect metrics from the app and model services via ServiceMonitor resources defined in this chart. Install Prometheus stack from the operation repository (with KUBECONFIG=./admin.conf pointing to the cluster):
+We use Prometheus from the kube-prometheus-stack Helm chart to automatically collect metrics from the app and model services via ServiceMonitor resources defined in this chart.
+
+1. Port-forward the Prometheus service:
 
 ```bash
-# Ensure the Helm repo is added
-helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
-helm repo update
-
-# Install kube-prometheus-stack into the same namespace as the app
-helm install monitoring prometheus-community/kube-prometheus-stack \
-  --namespace sms-checker \
-  --create-namespace
+kubectl port-forward svc/sms-checker-monitoring-prometheus 9090:9090
 ```
 
-This installs:
-Prometheus
-Alertmanager
-node-exporter, kube-state-metrics, etc.
-The CRDs needed for ServiceMonitor, PrometheusRule, etc.
-The app and model services are annotated with labels and have corresponding ServiceMonitor objects, so Prometheus automatically discovers and scrapes their /metrics endpoints.
-
-Check that Prometheus sees the app
-
-1. Find the Prometheus service:
-
-```bash
-kubectl get svc -n sms-checker | grep prometheus
-```
-
-2. Port-forward it (replace <prometheus-service-name> with the name from above):
-
-```bash
-kubectl port-forward -n sms-checker svc/<prometheus-service-name> 9090:9090
-```
-
-3. Open Prometheus in your browser:
+2. Open Prometheus in your browser:
 
 ```bash
 http://localhost:9090
 ```
 
 4. Go to Status → Target health and confirm that the targets created by the ServiceMonitors are UP (job names containing sms-checker).
-5. In the Query tab, type one of the custom metric names used by the app (for example, a counter/gauge/histogram metric defined in the app repo) and click Execute to see the time series collected by Prometheus.
+5. In the Query tab, you can run queries for the custom metrics exposed by the app:
+
+- `sms_requests_total` (Counter): Total number of SMS requests completed
+- `sms_requests_inflight` (Gauge): Current number of SMS requests being processed
+- `sms_request_latency_seconds` (Histogram): How long each SMS request took to complete
 
 ## Grafana Dashboards
 
@@ -416,7 +394,7 @@ After installation, access Grafana:
 1. Port-forward to Grafana service:
 
 ```bash
-kubectl port-forward svc/sms-checker-monitoring-grafana 3000:80
+kubectl port-forward svc/sms-checker-grafana 3000:80
 ```
 
 1. Open browser to `http://localhost:3000`
@@ -426,5 +404,9 @@ kubectl port-forward svc/sms-checker-monitoring-grafana 3000:80
    - Password: Get it with:
 
 ```bash
-kubectl get secret sms-checker-monitoring-grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
+kubectl get secret sms-checker-grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
 ```
+
+3. You can now check the pre-configured dashboards:
+
+- SMS Checker - Custom Metrics Dashboard

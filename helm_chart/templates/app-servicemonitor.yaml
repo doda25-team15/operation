@@ -4,11 +4,12 @@ metadata:
   name: {{ .Release.Name }}-app-servicemonitor
   labels:
     app: app
+    team: doda25-team15
     app.kubernetes.io/managed-by: sms-checker
 spec:
   selector:
     matchLabels:
-      app: app
+      component: app
   endpoints:
     - port: http
       path: /metrics

@@ -8,5 +8,5 @@ metadata:
     release: {{ .Release.Name }}
     grafana_dashboard: "1"
 data:
-  pods-overview.json: |
-{{ .Files.Get "dashboards/pods-overview.json" | indent 4 }}
+  sms-checker-custom-metrics.json: |
+{{ .Files.Get "dashboards/sms-checker-custom-metrics.json" | indent 4 }}

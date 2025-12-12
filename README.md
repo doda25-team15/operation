@@ -34,10 +34,6 @@ https://github.com/doda25-team15/app/tree/a3
 - `PORT`: Server port (default: 8080)
 - `MODEL_SERVICE_URL`: URL to the model-service endpoint (default: http://localhost:8081)
 
-**Notes**:
-
-- We used Gradle to build the app instead of Maven.
-
 ## Lib Repository
 
 https://github.com/doda25-team15/lib-version/tree/a3

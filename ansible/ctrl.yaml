@@ -39,10 +39,10 @@
       when: not kubeadm_conf.stat.exists
 
     - name: Export admin.conf to host machine
-      copy:
+      fetch:
         src: /etc/kubernetes/admin.conf
-        dest: /vagrant/admin.conf
-        remote_src: true
+        dest: "{{ playbook_dir }}/../admin.conf"
+        flat: yes
       when: not kubeadm_conf.stat.exists
 
     # STEP 15 — Apply Flannel CNI

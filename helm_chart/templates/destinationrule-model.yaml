@@ -5,6 +5,11 @@ metadata:
   name: {{ .Release.Name }}-model-dr
 spec:
   host: {{ .Values.service.model.name }}
+  trafficPolicy:
+    connectionPool:
+      http:
+        http1MaxPendingRequests: 1024
+        maxRequestsPerConnection: 1024
   subsets:
   - name: v1
     labels:
@@ -12,9 +17,4 @@ spec:
   - name: v2
     labels:
       version: v2
-  trafficPolicy:
-    connectionPool:
-      http:
-        http1MaxPendingRequests: 1024
-        maxRequestsPerConnection: 1024
 {{- end }}

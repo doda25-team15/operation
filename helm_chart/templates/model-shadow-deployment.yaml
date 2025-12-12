@@ -2,7 +2,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Values.shadow.name }}-shadow
+  name: {{ .Values.shadow.name }}
   labels:
     app: {{ .Values.labels.model.app }}
     component: model

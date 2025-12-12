@@ -94,7 +94,7 @@ shadow:
   name: model-shadow
   image:
     repository: ghcr.io/doda25-team15/model-service
-    tag: v2.0.0
+    tag: latest
     pullPolicy: IfNotPresent
   replicas: 1
   volume:

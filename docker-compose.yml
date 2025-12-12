@@ -1,0 +1,26 @@
+version: "3.9"
+
+services:
+  app-service:
+    image: ghcr.io/doda25-team15/app:v1.0.6
+    container_name: app-service
+    ports:
+      - "${APP_PORT}:${APP_PORT}"
+    environment:
+      MODEL_SERVICE_URL: "http://model-service:${MODEL_SERVICE_PORT}"
+      PORT: ${APP_PORT}
+    depends_on:
+      - model-service
+
+  model-service:
+    image: ghcr.io/doda25-team15/model-service:v1.0.2
+    container_name: model-service
+    expose:
+      - ${MODEL_SERVICE_PORT}
+    environment:
+      PORT: ${MODEL_SERVICE_PORT}
+    volumes:
+      - "volume_cache:/output"
+
+volumes:
+  volume_cache:

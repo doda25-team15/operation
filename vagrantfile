@@ -1,0 +1,71 @@
+# Load environment variables from .env file
+env_file = File.join(File.dirname(__FILE__), '.env')
+if File.exist?(env_file)
+  File.read(env_file).each_line do |line|
+    next if line.strip.empty? || line.strip.start_with?('#')
+    key, value = line.split('=', 2)
+    next unless key && value
+    value = value.split('#').first.strip
+    ENV[key.strip] = value unless value.empty?
+  end
+end
+
+# Get configuration from environment variables with defaults
+IMAGE_NAME = ENV['IMAGE_NAME'] || "bento/ubuntu-24.04"
+WORKER_COUNT = (ENV['WORKER_COUNT'] || 2).to_i
+CTRL_CPU = (ENV['CTRL_CPU'] || 2).to_i
+CTRL_MEMORY = (ENV['CTRL_MEMORY'] || 4096).to_i
+WORKER_CPU = (ENV['WORKER_CPU'] || 2).to_i
+WORKER_MEMORY = (ENV['WORKER_MEMORY'] || 6144).to_i
+
+Vagrant.configure("2") do |config|
+  config.ssh.insert_key = false
+
+  # controller
+  config.vm.define "ctrl" do |ctrl|
+    ctrl.vm.box = IMAGE_NAME
+    ctrl.vm.hostname = "ctrl"
+    ctrl.vm.network "private_network", ip: "192.168.56.100"
+
+    ctrl.vm.provider "virtualbox" do |vb|
+      vb.name = "ctrl"
+      vb.cpus = CTRL_CPU
+      vb.memory = CTRL_MEMORY
+    end
+  end
+
+
+  #workers
+  (1..WORKER_COUNT).each do |i|
+    config.vm.define "node-#{i}" do |node|
+      node.vm.box = IMAGE_NAME
+      node.vm.hostname = "node-#{i}"
+      node.vm.network "private_network", ip: "192.168.56.#{100 + i}"
+
+      node.vm.provider "virtualbox" do |vb|
+        vb.name = "node-#{i}"
+        vb.cpus = WORKER_CPU
+        vb.memory = WORKER_MEMORY
+      end
+    end
+  end
+
+  config.vm.provision "ansible" do |ansible|
+    ansible.playbook = "./ansible/general.yaml"
+    ansible.limit = "all"
+    ansible.extra_vars = {
+      worker_count: WORKER_COUNT
+    }
+  end
+
+  config.vm.provision "ansible" do |ansible|
+    ansible.playbook = "./ansible/ctrl.yaml"
+    ansible.limit = "ctrl"
+  end
+
+  config.vm.provision "ansible" do |ansible|
+    ansible.playbook = "./ansible/node.yaml"
+    ansible.limit = "all"  #filtered in node.yaml
+  end
+
+end

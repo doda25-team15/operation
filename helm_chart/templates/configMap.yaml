@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.configMap.name }}
+  labels:
+    app: {{ .Values.labels.app.app }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version }}
+    release: {{ .Release.Name }}
+data:
+  APP_PORT: "{{ .Values.service.app.port }}"
+  MODEL_HOST: "http://{{ .Values.service.model.name }}:{{ .Values.service.model.port }}"

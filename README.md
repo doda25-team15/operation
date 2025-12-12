@@ -335,14 +335,44 @@ kubectl get secret sms-checker-grafana -o jsonpath="{.data.admin-password}" | ba
 
 - SMS Checker - Custom Metrics Dashboard
 
-## Additional Istio Use Case
+## Additional Istio Use Case: Shadow Launch
 
 ### Prerequisite
 
-Make sure Istio sidecar injection is enabled for the namespace you install into (likely default):
+Istio installed in the Kubernetes cluster.
+
+### Shadow Launch Setup
+
+Verify Pods Running
 
 ```bash
-kubectl label namespace default istio-injection=enabled --overwrite
+kubectl get pods
 ```
 
-Also ensure Istio control plane is installed and istioctl version is compatible with your cluster.
+Port-Forward the service
+
+```bash
+kubectl port-forward svc/model-service 8081:8081
+```
+
+**Keep this running.**
+
+### Testing
+
+Send Test Request
+```bash
+for i in {1..10}; do
+  curl -X POST http://127.0.0.1:8081/predict -H "Content-Type: application/json" -d '{"sms": "Hello world, test message"}'
+done
+```
+
+### Check Shadow Launch
+
+```bash
+# Count model-service-deployment requests
+kubectl logs $(kubectl get pods | grep model-service-deployment | awk '{print $1}') -c model | grep -c "POST /predict"
+
+# Count model-shadow requests
+echo "model-shadow total (shadow):"
+kubectl logs $(kubectl get pods | grep model-shadow | awk '{print $1}') -c model | grep -c "POST /predict"
+```

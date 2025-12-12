@@ -15,7 +15,11 @@ labels:
 image:
     app:
         repository: ghcr.io/doda25-team15/app
+<<<<<<< HEAD
         tag: v1.0.6
+=======
+        tag: v1.0.8
+>>>>>>> 751c91e50f0d79140a86b2793fd76c7899c5a04a
         pullPolicy: IfNotPresent
     model:
         repository: ghcr.io/doda25-team15/model-service
@@ -45,7 +49,7 @@ volume:
 
 volumeMounts:
     name: volume-cache
-    mountPath: /output
+    mountPath: /app/output
 
 configMap:
   name: env-config-map
@@ -61,6 +65,23 @@ monitoring:
       serviceMonitorSelector:
         matchLabels:
           team: doda25-team15
+    service:
+      sessionAffinity: ""
+
+  alertmanager:
+    service:
+      sessionAffinity: ""
+
+  coreDns:
+    enabled: false
+  kubeEtcd:
+    enabled: false
+  kubeControllerManager:
+    enabled: false
+  kubeScheduler:
+    enabled: false
+  kubeProxy:
+    enabled: false
 
   grafana:
     enabled: true

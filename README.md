@@ -19,7 +19,7 @@ https://github.com/doda25-team15/model-service/tree/a3
 
 **Notes**:
 
-- The service expects the model to be mounted at `/output`, but if not found there, it will download it from GitHub Releases.
+- The service expects the model files to be available at `/app/output`, which is mounted from the host's `/mnt/shared/output` directory. If not found there, it will attempt to download them from GitHub Releases.
 
 ## App (Frontend) Repository
 
@@ -33,10 +33,6 @@ https://github.com/doda25-team15/app/tree/a3
 
 - `PORT`: Server port (default: 8080)
 - `MODEL_SERVICE_URL`: URL to the model-service endpoint (default: http://localhost:8081)
-
-**Notes**:
-
-- We used Gradle to build the app instead of Maven.
 
 ## Lib Repository
 
@@ -123,8 +119,6 @@ kubectl --kubeconfig=./admin.conf get nodes
 
 ### 5. Access Kubernetes Dashboard
 
-!!! NOTE step 22 is not final yet, there is some issue with authorization into the dashboard but the dashboard is deployed.
-
 You can access the Kubernetes Dashboard by navigating to the following URL in your web browser:
 
 ```
@@ -194,15 +188,45 @@ kubectl wait --namespace ingress-nginx \
   --timeout=120s
 ```
 
+## Setup Model Files Volume Mount
+
+The model-service requires trained model files (`model.joblib` and `preprocessor.joblib`). These files need to be available in the shared volume before deploying the application.
+
+**Setup steps for minikube:**
+
+1. Get the model files. You can either train the model yourself, or download a trained model form the GitHub Releases page https://github.com/doda25-team15/model-service/releases.
+
+2. Create the shared volume directory in minikube:
+
+```bash
+minikube ssh "sudo mkdir -p /mnt/shared/output"
+```
+
+3. Copy the model files to minikube:
+
+```bash
+minikube cp <path to model files on your system>/model.joblib /mnt/shared/output/model.joblib
+
+minikube cp <path to model files on your system>/preprocessor.joblib /mnt/shared/output/preprocessor.joblib
+```
+
+For simple testing, you can use the example model files provided in the `example_model` directory of this repository. See [operation/example_model/README.md](./example_model/README.md).
+
+1. Verify the files are present:
+
+```bash
+minikube ssh "ls -lh /mnt/shared/output/"
+```
+
 ## Deploy Using Kubernetes Manifests (k8s)
 
-```
+```bash
 kubectl apply -f k8s -R
 ```
 
 To verify:
 
-```
+```bash
 kubectl get pods
 kubectl get svc
 kubectl get ingress
@@ -212,20 +236,20 @@ kubectl get ingress
 
 Add hostname:
 
-```
+```bash
 echo "127.0.0.1 sms-checker-app" | sudo tee -a /etc/hosts
 ```
 
-Port-forward Ingress Controller:
+Port-forward Ingress Controller using kubectl:
 
-```
+```bash
 kubectl port-forward -n ingress-nginx \
   service/ingress-nginx-controller 8080:80
 ```
 
 Open in browser:
 
-```
+```bash
 http://sms-checker-app:8080/sms/
 ```
 
@@ -233,153 +257,50 @@ http://sms-checker-app:8080/sms/
 
 Install with Helm:
 
-```
+```bash
 cd helm_chart
 helm install sms-checker .
 ```
 
 Check release:
 
-```
+```bash
 helm status sms-checker
 kubectl get all
 ```
 
 Open in browser:
 
-```
+```bash
 http://sms-checker-app:8080/sms/
-```
-
-## Customise Helm Deployment
-
-### Examples
-
-Change number of replicas:
-
-```
-helm install sms-checker . --set replicaCount.app=5
-```
-
-Change Ingress hostname:
-
-```
-helm install sms-checker . --set ingress.host=myapp.local
-```
-
-Inject SMTP Credentials:
-
-```
-helm install sms-checker . \
-  --set secret.smtpUser="abc@mail" \
-  --set secret.smtpPass="secret"
-```
-
-Disable Ingress:
-
-```
-helm install sms-checker . --set ingress.enabled=false
-```
-
-**Verify changes:**
-
-```
-# Check replica count
-kubectl get pods -l component=app
-# Check hostname
-kubectl get ingress app-ingress -o jsonpath='{.spec.rules[0].host}'
-```
-
-## Testing the Deployment
-
-Check pods:
-
-```
-kubectl get pods
-```
-
-Tail logs:
-
-```
-kubectl logs -l app=sms-checker
-```
-
-Verify ConfigMap is mounted:
-
-```
-kubectl exec deploy/app-deployment -- env | grep MODEL_HOST
-```
-
-Verify Ingress:
-
-```
-kubectl describe ingress
-```
-
-## Additional Functionality
-
-Upgrade:
-
-```
-helm upgrade sms-checker .
-```
-
-Rollback:
-
-```
-helm rollback sms-checker
-```
-
-Uninstall:
-
-```
-helm uninstall sms-checker
 ```
 
 ## Prometheus Monitoring
 
-We use Prometheus from the kube-prometheus-stack Helm chart to automatically collect metrics from the app and model services via ServiceMonitor resources defined in this chart. Install Prometheus stack from the operation repository (with KUBECONFIG=./admin.conf pointing to the cluster):
+We use Prometheus from the kube-prometheus-stack Helm chart to automatically collect metrics from the app and model services via ServiceMonitor resources defined in this chart.
+
+1. Port-forward the Prometheus service:
 
 ```bash
-# Ensure the Helm repo is added
-helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
-helm repo update
+# Using kubectl
+kubectl port-forward svc/sms-checker-monitoring-prometheus 9090:9090
 
-# Install kube-prometheus-stack into the same namespace as the app
-helm install monitoring prometheus-community/kube-prometheus-stack \
-  --namespace sms-checker \
-  --create-namespace
+# Or using minikube
+minikube service sms-checker-monitoring-prometheus --url
 ```
 
-This installs:
-Prometheus
-Alertmanager
-node-exporter, kube-state-metrics, etc.
-The CRDs needed for ServiceMonitor, PrometheusRule, etc.
-The app and model services are annotated with labels and have corresponding ServiceMonitor objects, so Prometheus automatically discovers and scrapes their /metrics endpoints.
-
-Check that Prometheus sees the app
-1. Find the Prometheus service:
-
-```bash
-kubectl get svc -n sms-checker | grep prometheus
-```
-
-2. Port-forward it (replace <prometheus-service-name> with the name from above):
-   
-```bash
-kubectl port-forward -n sms-checker svc/<prometheus-service-name> 9090:9090
-```
-
-3. Open Prometheus in your browser:
+2. Open Prometheus in your browser:
 
 ```bash
 http://localhost:9090
 ```
 
 4. Go to Status → Target health and confirm that the targets created by the ServiceMonitors are UP (job names containing sms-checker).
-5. In the Query tab, type one of the custom metric names used by the app (for example, a counter/gauge/histogram metric defined in the app repo) and click Execute to see the time series collected by Prometheus.
+5. In the Query tab, you can run queries for the custom metrics exposed by the app:
 
+- `sms_requests_total` (Counter): Total number of SMS requests completed
+- `sms_requests_inflight` (Gauge): Current number of SMS requests being processed
+- `sms_request_latency_seconds` (Histogram): How long each SMS request took to complete
 
 ## Grafana Dashboards
 
@@ -388,7 +309,11 @@ After installation, access Grafana:
 1. Port-forward to Grafana service:
 
 ```bash
-kubectl port-forward svc/sms-checker-monitoring-grafana 3000:80
+# Using kubectl
+kubectl port-forward svc/sms-checker-grafana 3000:80
+
+# Or using minikube
+minikube service sms-checker-grafana --url
 ```
 
 1. Open browser to `http://localhost:3000`
@@ -398,7 +323,13 @@ kubectl port-forward svc/sms-checker-monitoring-grafana 3000:80
    - Password: Get it with:
 
 ```bash
-kubectl get secret sms-checker-monitoring-grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
+
+
+3. You can now check the pre-configured dashboards:
+
+- SMS Checker - Custom Metrics Dashboard
+
+kubectl get secret sms-checker-grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
 ```
 
 ### running istio in minikube cluster

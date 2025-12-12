@@ -61,6 +61,23 @@ monitoring:
       serviceMonitorSelector:
         matchLabels:
           team: doda25-team15
+    service:
+      sessionAffinity: ""
+
+  alertmanager:
+    service:
+      sessionAffinity: ""
+
+  coreDns:
+    enabled: false
+  kubeEtcd:
+    enabled: false
+  kubeControllerManager:
+    enabled: false
+  kubeScheduler:
+    enabled: false
+  kubeProxy:
+    enabled: false
 
   grafana:
     enabled: true

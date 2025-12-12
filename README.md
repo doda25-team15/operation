@@ -1,112 +1,269 @@
-# Team 15
+# DODA 2025 - Team 15
 
-Emīls Dzintars, Frederik van der Els, Riya Gupta, Arjun Rajesh Nair, Jimmy Oei, Sneha Prashanth
+**Team Members:** Emīls Dzintars, Frederik van der Els, Riya Gupta, Arjun Rajesh Nair, Jimmy Oei, Sneha Prashanth
 
-## Operation Repository
+### Repositories
 
-https://github.com/doda25-team15/operation/tree/a3
+- **[Operation](https://github.com/doda25-team15/operation)** - Kubernetes deployment & infrastructure
+- **[App (Frontend)](https://github.com/doda25-team15/app)** - Java Spring Boot application that communicates with the model-service for predictions on SMS spam detection
+- **[Model Service](https://github.com/doda25-team15/model-service)** - Python Flask ML service that serves the trained spam detection model
+- **[Library](https://github.com/doda25-team15/lib-version)** - A lightweight library for managing and retrieving the application version
 
-## Model Service (Backend) Repository
+---
 
-https://github.com/doda25-team15/model-service/tree/a3
-**Workflows**:
+## Operation Repository Structure
 
-- Release workflow: workflow consisting of two jobs: training the model and releasing the Docker image for the model-service.
-
-**Configuration (Dockerfile env variables):**
-
-- `PORT`: Server port (default: 8081)
-
-**Notes**:
-
-- The service expects the model files to be available at `/app/output`, which is mounted from the host's `/mnt/shared/output` directory. If not found there, it will attempt to download them from GitHub Releases.
-
-## App (Frontend) Repository
-
-https://github.com/doda25-team15/app/tree/a3
-
-**Workflows**:
-
-- Release workflow: releases Docker image for the app service on
-
-**Configuration (Dockerfile env variables):**
-
-- `PORT`: Server port (default: 8080)
-- `MODEL_SERVICE_URL`: URL to the model-service endpoint (default: http://localhost:8081)
-
-## Lib Repository
-
-https://github.com/doda25-team15/lib-version/tree/a3
-
-**Workflows**:
-
-- Release workflow: builds and releases the library.
-
-**Notes**:
-
-- Uses Gradle instead of Maven.
+- `/ansible` - Ansible playbooks for Vagrant cluster provisioning
+- `/helm_chart` - Helm chart for Helm deployment
+- `/k8s` - Raw Kubernetes manifests for raw Kubernetes deployment
+- `/model` - Example model to provide/mount to deployments
+- `.env` - Environment variables for Vagrant/Ansible and Docker Compose deployments
+- `docker-compose.yml` - Docker Compose configuration for docker local deployment
+- `ACTIVITY.md` - Team activity log
+- `management.md` - Useful management and troubleshooting commands
+- `README.md` - This file
+- `vagrantfile` - Vagrant configuration for VM provisioning
 
 ## Run the application
 
-To run the project make sure Docker is installed.
+There are multiple ways to run the SMS Spam Checker application:
 
-You can run the project using docker-compose.yml file. Just go to the operation directory and write the following commands:
+1. [Helm Chart Deployment (Recommended)](#helm-chart-deployment-recommended)
+2. [Kubernetes Manifests Deployment](#kubernetes-manifests-deployment)
+3. [Docker Compose](#docker-compose-deployment)
+4. [Vagrant and Ansible Provisioning](#vagrant-and-ansible-provisioning)
+
+_Note:_ For the Kubernetes deployments we are using minikube as the local Kubernetes cluster. If you use some other Kubernetes cluster, make sure to adapt the instructions according to your setup.
+
+## Helm Chart Deployment (Recommended)
+
+### Prerequisites
+
+- Docker
+- Minikube
+- Kubectl
+- Helm
+
+### 1. Start Minikube Cluster
+
+```bash
+minikube start --driver=docker
+minikube addons enable ingress
+```
+
+Wait for ingress controller to be ready:
+
+```bash
+kubectl wait --namespace ingress-nginx \
+  --for=condition=ready pod \
+  --selector=app.kubernetes.io/component=controller \
+  --timeout=120s
+```
+
+### 2. Setup Model Files
+
+The model service requires trained model files. You can use the example model files provided in the `model/` directory of this repository. See [operation/model/README.md](./model/README.md) for details. Or use the trained model files from the [releases page](https://github.com/doda25-team15/model-service/releases). Once obtained, copy them to the minikube mounted volume:
+
+```bash
+# 1. Create directory in minikube
+minikube ssh "sudo mkdir -p /mnt/shared/output"
+```
+
+````bash
+# 2. Copy model files
+minikube cp ./model/model.joblib /mnt/shared/output/model.joblib
+minikube cp ./model/preprocessor.joblib /mnt/shared/output/preprocessor.joblib
+
+```bash
+# 3. Verify the files are copied
+minikube ssh "ls -lh /mnt/shared/output/"
+````
+
+### 3. Deploy with Helm
+
+```bash
+helm dependency build ./helm_chart
+helm install sms-checker ./helm_chart
+```
+
+```bash
+# Verify all pods are running and ready before proceeding with next steps
+kubectl get pods
+```
+
+### 4. Access
+
+### Application
+
+To access the application, add an entry to your `/etc/hosts` file:
+
+```bash
+echo "127.0.0.1 sms-checker-app" | sudo tee -a /etc/hosts
+```
+
+Port-forward the Nginx Ingress Controller:
+
+```bash
+# Using kubectl
+kubectl port-forward -n ingress-nginx \
+  service/ingress-nginx-controller 8080:80
+
+# Or using minikube
+minikube service ingress-nginx-controller -n ingress-nginx --url
+```
+
+Now you can open:
+
+- Frontend Application: http://sms-checker-app:8080/sms
+- Application Metrics: http://sms-checker-app:8080/metrics
+
+### Prometheus Monitoring
+
+We use Prometheus from the kube-prometheus-stack Helm chart to automatically collect metrics from the app and model services via ServiceMonitor resources defined in this chart.
+
+1. Port-forward the Prometheus service:
+
+```bash
+# Using kubectl
+kubectl port-forward svc/sms-checker-monitoring-prometheus 9090:9090
+
+# Or using minikube
+minikube service sms-checker-monitoring-prometheus --url
+```
+
+1. Open Prometheus in your browser http://localhost:9090
+
+2. Go to Status → Target health and confirm that the targets created by the ServiceMonitors are UP (job names containing sms-checker).
+3. In the Query tab, you can run queries for the custom metrics exposed by the app:
+
+- `sms_requests_total` (Counter): Total number of SMS requests completed
+- `sms_requests_inflight` (Gauge): Current number of SMS requests being processed
+- `sms_request_latency_seconds` (Histogram): How long each SMS request took to complete
+
+### Grafana Dashboards
+
+1. Port-forward the Grafana service:
+
+```bash
+# Using kubectl
+kubectl port-forward svc/sms-checker-grafana 3000:80
+
+# Or using minikube
+minikube service sms-checker-grafana --url
+```
+
+1. Open Grafana in your browser at http://localhost:3000
+
+2. Default credentials (from kube-prometheus-stack):
+   - Username: `admin`
+   - Password: Get it with:
+
+```bash
+kubectl get secret sms-checker-grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
+```
+
+3. You can now check the pre-configured dashboards:
+
+- SMS Checker - Custom Metrics Dashboard
+
+## Kubernetes Manifests Deployment
+
+### Prerequisites
+
+- Docker
+- Kubectl
+- Minikube
+
+### 1. Start Minikube Cluster
+
+See [Helm Chart Deployment -> Step 1](#1-start-minikube-cluster)
+
+### 2. Setup Model Files
+
+See [Helm Chart Deployment -> Step 2](#2-setup-model-files)
+
+### 3. Deploy using Kubernetes Manifests
+
+```bash
+kubectl apply -f k8s/ -R
+```
+
+### 4. Access
+
+### Application
+
+See [Helm Chart Deployment -> Access -> Application](#application).
+
+_Note:_ Prometheus and Grafana are not included when deploying using Kubernetes manifests.
+
+## Docker Compose Deployment
+
+This will run a local development deployment, without a Kubernetes cluster.
+
+_Note:_ This will use the model files in the `model/` directory. If you want to use default model files or test this logic, then you can clear the `model/` directory before starting the deployment. When there are no model files, the model service will download them from the latest release on GitHub.
+
+### Prerequisites
+
+- Docker
+
+### 1. Docker Compose
 
 ```bash
 docker compose up
 ```
 
-The configuration can be customized by setting the environment variables in the `.env` file.
+### Vagrant and Ansible Provisioning
 
-# Provisioning the Kubernetes Cluster
+This will provision a Kubernetes cluster on VirtualBox VMs using Vagrant and Ansible.
 
-Ensure you have Vagrant and VirtualBox installed to do the provisioning.
-The configuration of the provisioning can be customized by setting the environment variables in the `.env` file.
+### Prerequisites
+
+- Vagrant
+- VirtualBox
+- Ansible
 
 ### 1. Provision VMs and Initialize Cluster
-
-Start the Vagrant environment to provision the controller and worker nodes:
 
 ```bash
 vagrant up
 ```
 
-This will:
-
-- Create the controller VM (`ctrl`) and worker VMs (`node-1`, `node-2`)
-- Run general setup (Step 1-12)
-- Initialize the Kubernetes cluster on the controller (Step 13-17)
-- Join worker nodes to the cluster (Step 18-19)
-
-### 2. Verify Cluster Status
-
-Check that all nodes have joined the cluster successfully:
-
 ```bash
+# Verify cluster status in ctrl (all nodes should be Ready)
 vagrant ssh ctrl
 kubectl get nodes
 ```
 
-You should see all nodes (`ctrl`, `node-1`, `node-2`) with status `Ready`.
+### 2. Finalize Cluster Setup
 
-### 3. Finalize Cluster Setup
-
-After the VMs are provisioned and the cluster is initialized, run the `finalization.yml` playbook to install MetalLB and the Nginx Ingress Controller:
+After the VMs are provisioned and the cluster is initialized, run the `finalization.yml` playbook to install MetalLB, Nginx Ingress Controller and Kubernetes Dashboard. Make sure you don't run this command from within the `ctrl` VM, but from your host machine:
 
 ```bash
-ansible-playbook -u vagrant -i 192.168.56.100, finalization.yml
+ansible-playbook -u vagrant -i 192.168.56.100, ./ansible/finalization.yml
 ```
 
-This will:
+### 3. Deployment on the Provisioned Cluster
 
-- Install MetalLB for load balancing (Step 20)
-- Configure IP address pool (192.168.56.90-99)
-- Install Nginx Ingress Controller (Step 21) at IP 192.168.56.90
-- Deploy Kubernetes Dashboard (Step 22)
+Now that the cluster is ready, you can deploy the SMS Checker application using either the Helm chart or the Kubernetes manifests.
 
-### 4. Access the Cluster
+```bash
+# Go to the operation directory on the ctrl VM
+vagrant ssh ctrl
+cd /vagrant
+```
 
-You can now access your Kubernetes cluster from the host machine:
+Now you can follow the instructions from either:
+
+- [Helm Chart Deployment](#helm-chart-deployment-recommended) (from Step 3)
+- [Kubernetes Manifests Deployment](#kubernetes-manifests-deployment) (from Step 3)
+
+_Note:_ Step 1 and 2 are not needed, since the cluster is already provisioned and we automatically copy the model files from `/model` on the host machine to the shared volumes on the VMs in the Ansible playbooks.
+
+### 4. Access
+
+### Cluster
+
+You can access the Kubernetes cluster also from the host machine (instead of via ssh into the ctrl VM):
 
 ```bash
 # Using the exported kubeconfig
@@ -117,7 +274,22 @@ kubectl get nodes
 kubectl --kubeconfig=./admin.conf get nodes
 ```
 
-### 5. Access Kubernetes Dashboard
+This can for example help you with the port-forwarding for accessing Prometheus and Grafana.
+
+### Application
+
+To access the application, you have to add an entry to your `/etc/hosts` file on your host machine:
+
+```bash
+echo "192.168.56.90 sms-checker-app" | sudo tee -a /etc/hosts
+```
+
+Now you can open:
+
+- Frontend Application: http://sms-checker-app/sms
+- Application Metrics: http://sms-checker-app/metrics
+
+### Kubernetes Dashboard
 
 You can access the Kubernetes Dashboard by navigating to the following URL in your web browser:
 
@@ -135,197 +307,11 @@ vagrant ssh ctrl
 kubectl -n kubernetes-dashboard create token admin-user
 ```
 
-Currently metalLB is not working. To see website port-forwarding is required:
+#### Grafana and Prometheus
 
-```bash
-kubectl expose deployment app-service \
-  --type=NodePort \
-  --name=app-np \
-  --port=8080
+See:
 
-kubectl get svc app-np
+- [Prometheus Monitoring](#prometheus-monitoring)
+- [Grafana Dashboards](#grafana-dashboards)
 
-#you will get something like
-8080:3xxxx/TCP
-#copy 3xxxx
-
-```
-
-write in the browser http://192.168.56.100:<3xxxx>
-
----
-
-# Kubernetes Cluster Deployment
-
-## Prerequisites
-
-- kubectl
-- minikube
-- helm 3.x
-- Docker running locally
-- Nginx Ingress Controller
-
-## Start Kubernetes Cluster
-
-Start cluster:
-
-```
-minikube start --driver=docker
-```
-
-Enable Ingress:
-
-```
-minikube addons enable ingress
-```
-
-Wait for Ingress Controller:
-
-```
-kubectl wait --namespace ingress-nginx \
-  --for=condition=ready pod \
-  --selector=app.kubernetes.io/component=controller \
-  --timeout=120s
-```
-
-## Setup Model Files Volume Mount
-
-The model-service requires trained model files (`model.joblib` and `preprocessor.joblib`). These files need to be available in the shared volume before deploying the application.
-
-**Setup steps for minikube:**
-
-1. Get the model files. You can either train the model yourself, or download a trained model form the GitHub Releases page https://github.com/doda25-team15/model-service/releases.
-
-2. Create the shared volume directory in minikube:
-
-```bash
-minikube ssh "sudo mkdir -p /mnt/shared/output"
-```
-
-3. Copy the model files to minikube:
-
-```bash
-minikube cp <path to model files on your system>/model.joblib /mnt/shared/output/model.joblib
-
-minikube cp <path to model files on your system>/preprocessor.joblib /mnt/shared/output/preprocessor.joblib
-```
-
-For simple testing, you can use the example model files provided in the `example_model` directory of this repository. See [operation/example_model/README.md](./example_model/README.md).
-
-1. Verify the files are present:
-
-```bash
-minikube ssh "ls -lh /mnt/shared/output/"
-```
-
-## Deploy Using Kubernetes Manifests (k8s)
-
-```bash
-kubectl apply -f k8s -R
-```
-
-To verify:
-
-```bash
-kubectl get pods
-kubectl get svc
-kubectl get ingress
-```
-
-## Access Application
-
-Add hostname:
-
-```bash
-echo "127.0.0.1 sms-checker-app" | sudo tee -a /etc/hosts
-```
-
-Port-forward Ingress Controller using kubectl:
-
-```bash
-kubectl port-forward -n ingress-nginx \
-  service/ingress-nginx-controller 8080:80
-```
-
-Open in browser:
-
-```bash
-http://sms-checker-app:8080/sms/
-```
-
-## Deployment using Helm
-
-Install with Helm:
-
-```bash
-cd helm_chart
-helm install sms-checker .
-```
-
-Check release:
-
-```bash
-helm status sms-checker
-kubectl get all
-```
-
-Open in browser:
-
-```bash
-http://sms-checker-app:8080/sms/
-```
-
-## Prometheus Monitoring
-
-We use Prometheus from the kube-prometheus-stack Helm chart to automatically collect metrics from the app and model services via ServiceMonitor resources defined in this chart.
-
-1. Port-forward the Prometheus service:
-
-```bash
-# Using kubectl
-kubectl port-forward svc/sms-checker-monitoring-prometheus 9090:9090
-
-# Or using minikube
-minikube service sms-checker-monitoring-prometheus --url
-```
-
-2. Open Prometheus in your browser:
-
-```bash
-http://localhost:9090
-```
-
-4. Go to Status → Target health and confirm that the targets created by the ServiceMonitors are UP (job names containing sms-checker).
-5. In the Query tab, you can run queries for the custom metrics exposed by the app:
-
-- `sms_requests_total` (Counter): Total number of SMS requests completed
-- `sms_requests_inflight` (Gauge): Current number of SMS requests being processed
-- `sms_request_latency_seconds` (Histogram): How long each SMS request took to complete
-
-## Grafana Dashboards
-
-After installation, access Grafana:
-
-1. Port-forward to Grafana service:
-
-```bash
-# Using kubectl
-kubectl port-forward svc/sms-checker-grafana 3000:80
-
-# Or using minikube
-minikube service sms-checker-grafana --url
-```
-
-1. Open browser to `http://localhost:3000`
-
-2. Default credentials (from kube-prometheus-stack):
-   - Username: `admin`
-   - Password: Get it with:
-
-```bash
-kubectl get secret sms-checker-grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
-```
-
-3. You can now check the pre-configured dashboards:
-
-- SMS Checker - Custom Metrics Dashboard
+_Note:_ You have to run the port-forward commands in the `ctrl` VM or using the exported kubeconfig from the host machine.

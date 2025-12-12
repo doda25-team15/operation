@@ -627,6 +627,96 @@
       ],
       "title": "SMS Request Latency Over Time",
       "type": "timeseries"
+    },
+    {
+      "id": 200,
+      "title": "Shadow Launch: Request Volume Comparison",
+      "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 22 },
+      "targets": [
+        {
+          "expr": "sum(rate(model_requests_total{version=\"v1\"}[5m]))",
+          "legendFormat": "v1 requests"
+        },
+        {
+          "expr": "sum(rate(model_requests_total{version=\"v2\"}[5m]))",
+          "legendFormat": "v2 requests (shadow)"
+        }
+      ],
+      "options": {
+        "legend": { "showLegend": true, "placement": "bottom" },
+        "tooltip": { "mode": "multi" }
+      }
+    },
+    {
+      "id": 201,
+      "title": "Shadow Launch: Latency p95 Comparison",
+      "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 22 },
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(model_request_latency_seconds_bucket{version=\"v1\"}[5m])) by (le))",
+          "legendFormat": "v1 p95 latency"
+        },
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(model_request_latency_seconds_bucket{version=\"v2\"}[5m])) by (le))",
+          "legendFormat": "v2 p95 latency (shadow)"
+        }
+      ],
+      "options": {
+        "legend": { "showLegend": true, "placement": "bottom" },
+        "tooltip": { "mode": "multi" }
+      }
+    },
+    {
+      "id": 202,
+      "title": "Istio Mirrored Requests Hitting v2",
+      "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 30 },
+      "targets": [
+        {
+          "expr": "sum(increase(istio_requests_total{destination_app=\"model-service\", destination_version=\"v2\"}[5m]))",
+          "legendFormat": "mirrored requests → v2"
+        }
+      ],
+      "options": {
+        "legend": { "showLegend": true, "placement": "bottom" },
+        "tooltip": { "mode": "multi" }
+      }
+    },
+    {
+      "id": 203,
+      "title": "v1 vs v2 Output Disagreement Rate",
+      "type": "stat",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": { "h": 6, "w": 8, "x": 0, "y": 38 },
+      "targets": [
+        {
+          "expr": "sum(increase(model_prediction_mismatch_total[10m])) / sum(increase(model_requests_total{version=\"v1\"}[10m]))",
+          "legendFormat": "Mismatch %"
+        }
+      ],
+      "options": {
+        "textMode": "value_and_name",
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "center"
+      }
     }
   ],
   "preload": false,

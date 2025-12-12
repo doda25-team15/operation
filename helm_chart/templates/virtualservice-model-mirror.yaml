@@ -1,0 +1,22 @@
+{{- if .Values.shadow.enabled }}
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: {{ .Release.Name }}-model-vs
+  labels:
+    app: {{ .Values.labels.model.app }}
+spec:
+  hosts:
+    - {{ .Values.service.model.name }}
+  http:
+  - route:
+    - destination:
+        host: {{ .Values.service.model.name }}
+        subset: v1
+      weight: 100
+    mirror:
+      host: {{ .Values.service.model.name }}
+      subset: v2
+    mirror_percentage:
+      value: {{ .Values.shadow.mirrorPercentage | default 100 }}
+{{- end }}

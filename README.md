@@ -165,7 +165,8 @@ write in the browser http://192.168.56.100:<3xxxx>
 
 - kubectl
 - minikube
-- helm 3.x
+- Helm 3.x
+- Istio 1.20+
 - Docker running locally
 - Nginx Ingress Controller
 
@@ -333,3 +334,15 @@ kubectl get secret sms-checker-grafana -o jsonpath="{.data.admin-password}" | ba
 3. You can now check the pre-configured dashboards:
 
 - SMS Checker - Custom Metrics Dashboard
+
+## Additional Istio Use Case
+
+### Prerequisite
+
+Make sure Istio sidecar injection is enabled for the namespace you install into (likely default):
+
+```bash
+kubectl label namespace default istio-injection=enabled --overwrite
+```
+
+Also ensure Istio control plane is installed and istioctl version is compatible with your cluster.

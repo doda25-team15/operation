@@ -1,0 +1,45 @@
+{{- if .Values.shadow.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.shadow.name }}
+  labels:
+    app: {{ .Values.labels.model.app }}
+    component: model
+    role: shadow
+    version: v2
+spec:
+  replicas: {{ .Values.shadow.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Values.labels.model.app }}
+      role: shadow
+      version: v2
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.labels.model.app }}
+        role: shadow
+        version: v2
+        component: model
+    spec:
+      containers:
+        - name: model
+          image: "{{ .Values.shadow.image.repository }}:{{ .Values.shadow.image.tag }}"
+          imagePullPolicy: {{ .Values.shadow.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.service.model.port }}
+          env:
+            - name: VERSION
+              value: "v2"
+{{- if .Values.shadow.volume.enabled }}
+          volumeMounts:
+            - name: shadow-output
+              mountPath: {{ .Values.volumeMounts.mountPath }}
+          volumes:
+            - name: shadow-output
+              hostPath:
+                path: {{ .Values.shadow.volume.hostPath }}
+                type: DirectoryOrCreate
+{{- end }}
+{{- end }}

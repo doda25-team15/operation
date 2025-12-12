@@ -57,6 +57,7 @@ secret:
 
 monitoring:
   prometheus:
+    enabled: true
     prometheusSpec:
       serviceMonitorSelector:
         matchLabels:
@@ -87,3 +88,16 @@ monitoring:
         label: grafana_dashboard
         labelValue: "1"
         searchNamespace: ALL
+
+shadow:
+  enabled: true
+  name: model-shadow
+  image:
+    repository: ghcr.io/doda25-team15/model-service
+    tag: latest
+    pullPolicy: IfNotPresent
+  replicas: 1
+  volume:
+    enabled: false
+    hostPath: /mnt/shared/output-shadow
+  mirrorPercentage: 100

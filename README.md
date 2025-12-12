@@ -315,3 +315,45 @@ See:
 - [Grafana Dashboards](#grafana-dashboards)
 
 _Note:_ You have to run the port-forward commands in the `ctrl` VM or using the exported kubeconfig from the host machine.
+
+## Additional Istio Use Case: Shadow Launch
+
+### Prerequisite
+
+Istio installed in the Kubernetes cluster.
+
+### Shadow Launch Setup
+
+Verify Pods Running
+
+```bash
+kubectl get pods
+```
+
+Port-Forward the service
+
+```bash
+kubectl port-forward svc/model-service 8081:8081
+```
+
+**Keep this running.**
+
+### Testing
+
+Send Test Request
+```bash
+for i in {1..10}; do
+  curl -X POST http://127.0.0.1:8081/predict -H "Content-Type: application/json" -d '{"sms": "Hello world, test message"}'
+done
+```
+
+### Check Shadow Launch
+
+```bash
+# Count model-service-deployment requests
+kubectl logs $(kubectl get pods | grep model-service-deployment | awk '{print $1}') -c model | grep -c "POST /predict"
+
+# Count model-shadow requests
+echo "model-shadow total (shadow):"
+kubectl logs $(kubectl get pods | grep model-shadow | awk '{print $1}') -c model | grep -c "POST /predict"
+```

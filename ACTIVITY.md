@@ -86,3 +86,8 @@
 - Jimmy: https://github.com/doda25-team15/operation/pull/72
 
   Worked on start of Grafana dashboards.
+
+### Week 5 (Dec 8-14)
+
+- Arjun: https://github.com/doda25-team15/operation/pull/87
+ Worked on resolving the warnings which show up when installing helm 

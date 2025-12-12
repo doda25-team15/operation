@@ -26,12 +26,12 @@
 
 ## Run the application
 
-There are multiple deployment strategies available to run the SMS Spam Checker application:
+There are multiple ways to run the SMS Spam Checker application:
 
 1. [Helm Chart Deployment (Recommended)](#helm-chart-deployment-recommended)
 2. [Kubernetes Manifests Deployment](#kubernetes-manifests-deployment)
-3. [Docker Compose Deployment](#docker-compose-deployment)
-4. [Vagrant and Ansible Deployment](#vagrant-and-ansible-deployment)
+3. [Docker Compose](#docker-compose-deployment)
+4. [Vagrant and Ansible Provisioning](#vagrant-and-ansible-provisioning)
 
 _Note:_ For the Kubernetes deployments we are using minikube as the local Kubernetes cluster. If you use some other Kubernetes cluster, make sure to adapt the instructions according to your setup.
 
@@ -82,8 +82,13 @@ minikube ssh "ls -lh /mnt/shared/output/"
 ### 3. Deploy with Helm
 
 ```bash
-helm dependency build
+helm dependency build ./helm_chart
 helm install sms-checker ./helm_chart
+```
+
+```bash
+# Verify all pods are running and ready before proceeding with next steps
+kubectl get pods
 ```
 
 ### 4. Access
@@ -126,12 +131,10 @@ kubectl port-forward svc/sms-checker-monitoring-prometheus 9090:9090
 minikube service sms-checker-monitoring-prometheus --url
 ```
 
-2. Open Prometheus in your browser:
+1. Open Prometheus in your browser http://localhost:9090
 
-- http://localhost:9090
-
-1. Go to Status → Target health and confirm that the targets created by the ServiceMonitors are UP (job names containing sms-checker).
-2. In the Query tab, you can run queries for the custom metrics exposed by the app:
+2. Go to Status → Target health and confirm that the targets created by the ServiceMonitors are UP (job names containing sms-checker).
+3. In the Query tab, you can run queries for the custom metrics exposed by the app:
 
 - `sms_requests_total` (Counter): Total number of SMS requests completed
 - `sms_requests_inflight` (Gauge): Current number of SMS requests being processed
@@ -149,7 +152,7 @@ kubectl port-forward svc/sms-checker-grafana 3000:80
 minikube service sms-checker-grafana --url
 ```
 
-1. Open Grafana in your browser at `http://localhost:3000`
+1. Open Grafana in your browser at http://localhost:3000
 
 2. Default credentials (from kube-prometheus-stack):
    - Username: `admin`
@@ -209,7 +212,7 @@ _Note:_ This will use the model files in the `model/` directory. If you want to 
 docker compose up
 ```
 
-### Vagrant and Ansible Deployment
+### Vagrant and Ansible Provisioning
 
 This will provision a Kubernetes cluster on VirtualBox VMs using Vagrant and Ansible.
 
@@ -236,14 +239,31 @@ kubectl get nodes
 After the VMs are provisioned and the cluster is initialized, run the `finalization.yml` playbook to install MetalLB, Nginx Ingress Controller and Kubernetes Dashboard. Make sure you don't run this command from within the `ctrl` VM, but from your host machine:
 
 ```bash
-ansible-playbook -u vagrant -i 192.168.56.100, finalization.yml
+ansible-playbook -u vagrant -i 192.168.56.100, ./ansible/finalization.yml
 ```
 
-### 3. Access
+### 3. Deployment on the Provisioned Cluster
+
+Now that the cluster is ready, you can deploy the SMS Checker application using either the Helm chart or the Kubernetes manifests.
+
+```bash
+# Go to the operation directory on the ctrl VM
+vagrant ssh ctrl
+cd /vagrant
+```
+
+Now you can follow the instructions from either:
+
+- [Helm Chart Deployment](#helm-chart-deployment-recommended) (from Step 3)
+- [Kubernetes Manifests Deployment](#kubernetes-manifests-deployment) (from Step 3)
+
+_Note:_ Step 1 and 2 are not needed, since the cluster is already provisioned and we automatically copy the model files from `/model` on the host machine to the shared volumes on the VMs in the Ansible playbooks.
+
+### 4. Access
 
 ### Cluster
 
-You can now access the Kubernetes cluster from the host machine:
+You can access the Kubernetes cluster also from the host machine (instead of via ssh into the ctrl VM):
 
 ```bash
 # Using the exported kubeconfig
@@ -254,9 +274,20 @@ kubectl get nodes
 kubectl --kubeconfig=./admin.conf get nodes
 ```
 
+This can for example help you with the port-forwarding for accessing Prometheus and Grafana.
+
 ### Application
 
-TODO: How to access the application when deployed using Vagrant and Ansible?
+To access the application, you have to add an entry to your `/etc/hosts` file on your host machine:
+
+```bash
+echo "192.168.56.90 sms-checker-app" | sudo tee -a /etc/hosts
+```
+
+Now you can open:
+
+- Frontend Application: http://sms-checker-app/sms
+- Application Metrics: http://sms-checker-app/metrics
 
 ### Kubernetes Dashboard
 
@@ -275,3 +306,12 @@ vagrant ssh ctrl
 # Create token for admin-user
 kubectl -n kubernetes-dashboard create token admin-user
 ```
+
+#### Grafana and Prometheus
+
+See:
+
+- [Prometheus Monitoring](#prometheus-monitoring)
+- [Grafana Dashboards](#grafana-dashboards)
+
+_Note:_ You have to run the port-forward commands in the `ctrl` VM or using the exported kubeconfig from the host machine.

@@ -18,6 +18,7 @@ spec:
       labels:
         app: {{ .Values.labels.app.app }}
         component: {{ .Values.labels.app.component }}
+        version: v1
     spec:
       containers:
       - name: app

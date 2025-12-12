@@ -400,3 +400,49 @@ kubectl port-forward svc/sms-checker-monitoring-grafana 3000:80
 ```bash
 kubectl get secret sms-checker-monitoring-grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
 ```
+
+### running istio in minikube cluster
+
+```
+minikube delete
+minikube start --memory=8192 --cpus=4
+minikube addons enable istio-provisioner
+minikube addons enable istio
+minikube addons enable ingress
+
+
+kubectl label namespace default istio-injection-
+helm uninstall sms-checker
+helm install sms-checker .
+kubectl label namespace default istio-injection=enabled
+kubectl rollout restart deployment
+```
+
+wait for all pods to run
+```
+kubectl get pod
+```
+
+make sure app pods have sidecar
+```
+kubectl get pod <pod name> -o jsonpath='{.spec.containers[*].name}'
+```
+it should display app istio-proxy
+
+connect to istio loadbalancer with minikube tunnel
+
+make sure loadbalancer has external ip 
+```
+kubectl get svc -n istio-system istio-ingressgateway-ingressgateway
+```
+external should not be <pending>
+
+test if istio works:
+```
+curl -H "Host: sms-checker-app" http://<external ip>:80
+```
+
+can open in browser at http://<external ip>:80
+```
+echo "<external ip> sms-checker-app" | sudo tee -a /etc/hosts
+```

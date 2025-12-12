@@ -15,7 +15,7 @@ labels:
 image:
     app:
         repository: ghcr.io/doda25-team15/app
-        tag: v1.0.7
+        tag: v1.0.6
         pullPolicy: IfNotPresent
     model:
         repository: ghcr.io/doda25-team15/model-service
@@ -70,3 +70,6 @@ monitoring:
         label: grafana_dashboard
         labelValue: "1"
         searchNamespace: ALL
+istio: 
+  gateway: 
+    name: sms-checker-gateway

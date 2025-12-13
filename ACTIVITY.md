@@ -69,9 +69,9 @@
 
 - Arjun: https://github.com/doda25-team15/operation/pull/68
   Fixed the error of gaining authorization into Kubernetes Dashboard. Installed Istio (v1.25.2) by downloading it, adding istioctl to PATH, and running the Istio installation for service-mesh support.
-- Riya: https://github.com/doda25-team15/operation/pull/69
+- Riya: https://github.com/doda25-team15/operation/pull/69, https://github.com/doda25-team15/model-service/pull/7
 
-  Updated the application to run Kubernetes deployment using minikube and kubectl. Created Helm Chart and its deployment configuration.
+  Updated the application to run Kubernetes deployment using minikube and kubectl. Created Helm Chart and its deployment configuration. Worked on feedback received regarding A1 to make the docker images public and separate the workflows.
 
 - Frederik: https://github.com/doda25-team15/model-service/pull/8
 
@@ -93,4 +93,9 @@
   Worked on resolving the warnings which show up when installing helm
 
 - Jimmy: https://github.com/doda25-team15/operation/pull/84, https://github.com/doda25-team15/operation/pull/86
+  
   Fixed the failing model-service pods. Fixed prometheus not picking up metrics from the app. Added a Grafana dashboard for the custom metrics. Simplified the README.md file.
+
+- Riya: https://github.com/doda25-team15/operation/pull/91
+  
+  Implemented an additional istio use case: shadow launch

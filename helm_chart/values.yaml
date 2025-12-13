@@ -61,6 +61,7 @@ secret:
 
 monitoring:
   prometheus:
+    enabled: true
     prometheusSpec:
       serviceMonitorSelector:
         matchLabels:
@@ -91,6 +92,22 @@ monitoring:
         label: grafana_dashboard
         labelValue: "1"
         searchNamespace: ALL
+<<<<<<< HEAD
 istio: 
   gateway: 
     name: sms-checker-gateway
+=======
+
+shadow:
+  enabled: true
+  name: model-shadow
+  image:
+    repository: ghcr.io/doda25-team15/model-service
+    tag: latest
+    pullPolicy: IfNotPresent
+  replicas: 1
+  volume:
+    enabled: false
+    hostPath: /mnt/shared/output-shadow
+  mirrorPercentage: 100
+>>>>>>> 15f9ee9fdcabfa66ebcd47df4e040e7de0015490

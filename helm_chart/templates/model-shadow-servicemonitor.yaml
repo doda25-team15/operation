@@ -1,0 +1,18 @@
+{{- if .Values.shadow.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ .Release.Name }}-model-shadow-sm
+  labels:
+    app: {{ .Values.labels.model.app }}
+    team: {{ .Values.labels.app.team }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Values.labels.model.app }}
+      role: shadow
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 15s
+{{- end }}

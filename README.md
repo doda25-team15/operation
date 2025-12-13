@@ -318,7 +318,7 @@ _Note:_ You have to run the port-forward commands in the `ctrl` VM or using the 
 kubectl get secret sms-checker-grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
 ```
 
-#### running istio in minikube cluster
+## running istio in minikube cluster
 
 ```
 minikube delete
@@ -362,4 +362,46 @@ curl -H "Host: sms-checker-app" http://<external ip>:80
 can open in browser at http://<external ip>:80
 ```
 echo "<external ip> sms-checker-app" | sudo tee -a /etc/hosts
+```
+
+## Additional Istio Use Case: Shadow Launch
+
+### Prerequisite
+
+Istio installed in the Kubernetes cluster.
+
+### Shadow Launch Setup
+
+Verify Pods Running
+
+```bash
+kubectl get pods
+```
+
+Port-Forward the service
+
+```bash
+kubectl port-forward svc/model-service 8081:8081
+```
+
+**Keep this running.**
+
+### Testing
+
+Send Test Request
+```bash
+for i in {1..10}; do
+  curl -X POST http://127.0.0.1:8081/predict -H "Content-Type: application/json" -d '{"sms": "Hello world, test message"}'
+done
+```
+
+### Check Shadow Launch
+
+```bash
+# Count model-service-deployment requests
+kubectl logs $(kubectl get pods | grep model-service-deployment | awk '{print $1}') -c model | grep -c "POST /predict"
+
+# Count model-shadow requests
+echo "model-shadow total (shadow):"
+kubectl logs $(kubectl get pods | grep model-shadow | awk '{print $1}') -c model | grep -c "POST /predict"
 ```

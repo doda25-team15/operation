@@ -1,0 +1,25 @@
+{{- if .Values.shadow.enabled }}
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: virtualservice-model-shadow
+  labels:
+    app: {{ .Values.labels.model.app }}
+spec:
+  hosts:
+    - {{ .Values.service.model.name }}
+  http:
+  - route:
+    - destination:
+        host: {{ .Values.service.model.name }}
+        port:
+          number: {{ .Values.service.model.port }}
+        subset: v1
+    mirror:
+      host: {{ .Values.service.model.name }}
+      port:
+          number: {{ .Values.service.model.port }}
+      subset: v2
+    mirrorPercentage:
+      value: {{ .Values.shadow.mirrorPercentage }}
+{{- end }}

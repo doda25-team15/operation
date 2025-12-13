@@ -1,0 +1,20 @@
+{{- if .Values.shadow.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.shadow.name }}
+  labels:
+    app: {{ .Values.labels.model.app }}
+    role: shadow
+    component: model
+spec:
+  selector:
+    app: {{ .Values.labels.model.app }}
+    role: shadow
+  ports:
+    - port: {{ .Values.service.model.port }}
+      targetPort: {{ .Values.service.model.targetPort }}
+      protocol: TCP
+      name: http
+  type: {{ .Values.service.type }}
+{{- end }}

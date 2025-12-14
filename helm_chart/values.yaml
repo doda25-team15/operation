@@ -88,11 +88,10 @@ monitoring:
         label: grafana_dashboard
         labelValue: "1"
         searchNamespace: ALL
-<<<<<<< HEAD
+
 istio: 
   gateway: 
     name: sms-checker-gateway
-=======
 
 shadow:
   enabled: true
@@ -106,4 +105,3 @@ shadow:
     enabled: false
     hostPath: /mnt/shared/output-shadow
   mirrorPercentage: 100
->>>>>>> 15f9ee9fdcabfa66ebcd47df4e040e7de0015490

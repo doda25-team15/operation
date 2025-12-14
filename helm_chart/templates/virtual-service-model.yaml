@@ -20,7 +20,6 @@ spec:
               number: {{ .Values.service.model.port }}
             subset: v1
           weight: 80
-    - route:
         - destination:
             host: {{ .Values.service.model.name }}
             port:

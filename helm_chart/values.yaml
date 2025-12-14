@@ -92,7 +92,7 @@ monitoring:
 istio:
   gateway:
     name: sms-checker-gateway
-    ingressGatewaySelector: ingressGateway
+    ingressGatewaySelector: ingressgateway
 
 shadow:
   enabled: true
@@ -103,6 +103,6 @@ shadow:
     tag: latest
     pullPolicy: IfNotPresent
   volume:
-    enabled: false
+    enabled: true
     hostPath: /mnt/shared/output-shadow
   mirrorPercentage: 100

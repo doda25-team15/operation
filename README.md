@@ -202,11 +202,14 @@ Connect to Istio load balancer with minikube tunnel
 ```bash
 # Make sure loadbalancer has external ip 
 kubectl get svc -n istio-system istio-ingressgateway
-
-# external-ip should not be <pending>
 ```
 
-Test if istio works:
+After running the previous command, check the value of **EXTERNAL-IP** for the Istio Ingress Gateway.
+Based on its value, follow **only one** of the options below.
+
+**Option 1:** External-IP Is Available (Not Empty and Not `<pending>`)
+
+Test istio using curl:
 
 ```bash
 curl -H "Host: sms-checker-app" http://<external ip>:80
@@ -218,48 +221,60 @@ Open in browser at http://\<external ip\>:80
 echo "<external ip> sms-checker-app" | sudo tee -a /etc/hosts
 ```
 
+**Option 2:** External-IP Is Not Available (Empty or `<pending>`)
+
+Port-forward the Istio Ingress-Gateway
+
+```bash
+kubectl port-forward -n istio-system svc/istio-ingressgateway 8080:80
+```
+
+Open in browser
+
+```bash
+http://localhost:8080/sms/
+```
+
 ### Additional Istio Use Case: Shadow Launch
 
 #### Prerequisite
 
 Istio installed in the Kubernetes cluster.
 
+A running Istio Ingress-Gateway from the previous setup
+
 #### Shadow Launch Setup
 
-Verify Pods Running
+Verify Shadow Pod Running
 
 ```bash
 kubectl get pods
 ```
 
-Port-Forward the service
-
-```bash
-kubectl port-forward svc/model-service 8081:8081
-# Keep this running
-```
-
 #### Testing
 
-Send Test Request
+Send test requests
 ```bash
-for i in {1..10}; do
-  curl -X POST http://127.0.0.1:8081/predict -H "Content-Type: application/json" -d '{"sms": "Hello world, test message"}'
+for i in {1..10}; do      
+  curl -X POST http://127.0.0.1:8080/sms \
+    -H "Content-Type: application/json" \
+    -d '{"sms":"Hello world, test message"}'
 done
 ```
 
 #### Check Shadow Launch
 
+The count of model-shadow logs will be equal to model-service-deployment-v1 + model-service-deployment-canary logs.
+
 ```bash
 # Count model-service-deployment-v1 requests
-kubectl logs $(kubectl get pods | grep model-service-deployment-v1 | awk '{print $1}') -c model | grep -c "POST /predict"
+kubectl logs deploy/model-service-deployment-v1 | grep -c predict
 
 # Count model-service-deployment-canary requests
-kubectl logs $(kubectl get pods | grep model-service-deployment-canary | awk '{print $1}') -c model | grep -c "POST /predict"
+kubectl logs deploy/model-service-deployment-canary | grep -c predict
 
 # Count model-shadow requests
-echo "model-shadow total (shadow):"
-kubectl logs $(kubectl get pods | grep model-shadow | awk '{print $1}') -c model | grep -c "POST /predict"
+kubectl logs deploy/model-shadow | grep -c predict
 ```
 
 ## Kubernetes Manifests Deployment

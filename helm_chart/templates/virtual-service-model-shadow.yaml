@@ -12,27 +12,14 @@ spec:
   - route:
     - destination:
         host: {{ .Values.service.model.name }}
-        port:
-          number: {{ .Values.service.model.port }}
         subset: v1
-    mirror:
-      host: {{ .Values.service.model.name }}
-      port:
-          number: {{ .Values.service.model.port }}
-      subset: v3
-    mirrorPercentage:
-      value: {{ .Values.shadow.mirrorPercentage }}
-
-  - route:
+      weight: 80
     - destination:
         host: {{ .Values.service.model.name }}
-        port:
-          number: {{ .Values.service.model.port }}
         subset: v2
+      weight: 20
     mirror:
       host: {{ .Values.service.model.name }}
-      port:
-          number: {{ .Values.service.model.port }}
       subset: v3
     mirrorPercentage:
       value: {{ .Values.shadow.mirrorPercentage }}

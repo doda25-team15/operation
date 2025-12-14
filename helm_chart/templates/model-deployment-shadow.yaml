@@ -5,23 +5,21 @@ metadata:
   name: {{ .Values.shadow.name }}
   labels:
     app: {{ .Values.labels.model.app }}
-    component: model
-    role: shadow
     version: v3
+    role: shadow
 spec:
   replicas: {{ .Values.shadow.replicas }}
   selector:
     matchLabels:
       app: {{ .Values.labels.model.app }}
-      role: shadow
       version: v3
+      role: shadow
   template:
     metadata:
       labels:
         app: {{ .Values.labels.model.app }}
-        role: shadow
         version: v3
-        component: model
+        role: shadow
     spec:
       containers:
         - name: model
@@ -32,14 +30,12 @@ spec:
           envFrom:
             - secretRef:
                 name: {{ .Values.secret.name }}
-{{- if .Values.shadow.volume.enabled }}
           volumeMounts:
             - name: shadow-output
               mountPath: {{ .Values.volumeMounts.mountPath }}
-          volumes:
-            - name: shadow-output
-              hostPath:
-                path: {{ .Values.shadow.volume.hostPath }}
-                type: DirectoryOrCreate
-{{- end }}
+      volumes:
+          - name: shadow-output
+            hostPath:
+              path: {{ .Values.shadow.volume.hostPath }}
+              type: DirectoryOrCreate
 {{- end }}

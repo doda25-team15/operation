@@ -4,10 +4,9 @@ metadata:
   name: {{ .Values.labels.model.name }}-deployment-canary
   labels:
     app: {{ .Values.labels.model.app }}
-    chart: {{ .Chart.Name }}-{{ .Chart.Version }}
     version: v2
+    chart: {{ .Chart.Name }}-{{ .Chart.Version }}
     release: {{ .Release.Name }}
-    version: v1
 spec:
   replicas: {{ .Values.replicaCount.model }}
   selector:

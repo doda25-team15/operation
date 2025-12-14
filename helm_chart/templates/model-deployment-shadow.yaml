@@ -32,6 +32,7 @@ spec:
           envFrom:
             - secretRef:
                 name: {{ .Values.secret.name }}
+{{- if .Values.shadow.volume.enabled }}
           volumeMounts:
             - name: shadow-output
               mountPath: {{ .Values.volumeMounts.mountPath }}
@@ -40,4 +41,5 @@ spec:
               hostPath:
                 path: {{ .Values.shadow.volume.hostPath }}
                 type: DirectoryOrCreate
+{{- end }}
 {{- end }}

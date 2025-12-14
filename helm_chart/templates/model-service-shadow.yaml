@@ -1,6 +1,6 @@
 {{- if .Values.shadow.enabled }}
 apiVersion: v1
-kind: model-service-shadow
+kind: Service
 metadata:
   name: {{ .Values.shadow.name }}
   labels:

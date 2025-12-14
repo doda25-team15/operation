@@ -201,9 +201,9 @@ Connect to Istio load balancer with minikube tunnel
 
 ```bash
 # Make sure loadbalancer has external ip 
-kubectl get svc -n istio-system istio-ingressgateway-ingressgateway
+kubectl get svc -n istio-system istio-ingressgateway
 
-# external should not be <pending>
+# external-ip should not be <pending>
 ```
 
 Test if istio works:
@@ -251,8 +251,11 @@ done
 #### Check Shadow Launch
 
 ```bash
-# Count model-service-deployment requests
-kubectl logs $(kubectl get pods | grep model-service-deployment | awk '{print $1}') -c model | grep -c "POST /predict"
+# Count model-service-deployment-v1 requests
+kubectl logs $(kubectl get pods | grep model-service-deployment-v1 | awk '{print $1}') -c model | grep -c "POST /predict"
+
+# Count model-service-deployment-canary requests
+kubectl logs $(kubectl get pods | grep model-service-deployment-canary | awk '{print $1}') -c model | grep -c "POST /predict"
 
 # Count model-shadow requests
 echo "model-shadow total (shadow):"

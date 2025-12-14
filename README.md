@@ -69,15 +69,16 @@ The model service requires trained model files. You can use the example model fi
 minikube ssh "sudo mkdir -p /mnt/shared/output"
 ```
 
-````bash
+```bash
 # 2. Copy model files
 minikube cp ./model/model.joblib /mnt/shared/output/model.joblib
 minikube cp ./model/preprocessor.joblib /mnt/shared/output/preprocessor.joblib
+```
 
 ```bash
 # 3. Verify the files are copied
 minikube ssh "ls -lh /mnt/shared/output/"
-````
+```
 
 ### 3. Deploy with Helm
 
@@ -159,11 +160,105 @@ minikube service sms-checker-grafana --url
    - Password: Get it with:
 
 ```bash
-
+kubectl get secret sms-checker-grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
+```
 
 3. You can now check the pre-configured dashboards:
 
 - SMS Checker - Custom Metrics Dashboard
+
+### Traffic Management using Istio
+
+```bash
+minikube delete
+minikube start --memory=8192 --cpus=4
+minikube addons enable istio-provisioner
+minikube addons enable istio
+minikube addons enable ingress
+
+
+kubectl label namespace default istio-injection-
+helm uninstall sms-checker
+helm install sms-checker .
+kubectl label namespace default istio-injection=enabled
+kubectl rollout restart deployment
+```
+
+Wait for all pods to run
+
+```bash
+kubectl get pods
+```
+
+Make sure app pods have sidecar
+
+```bash
+# Displays app istio-proxy
+kubectl get pod <pod name> -o jsonpath='{.spec.containers[*].name}'
+```
+
+Connect to Istio load balancer with minikube tunnel
+
+```bash
+# Make sure loadbalancer has external ip 
+kubectl get svc -n istio-system istio-ingressgateway-ingressgateway
+
+# external should not be <pending>
+```
+
+Test if istio works:
+
+```bash
+curl -H "Host: sms-checker-app" http://<external ip>:80
+```
+
+Open in browser at http://\<external ip\>:80
+
+```bash
+echo "<external ip> sms-checker-app" | sudo tee -a /etc/hosts
+```
+
+### Additional Istio Use Case: Shadow Launch
+
+#### Prerequisite
+
+Istio installed in the Kubernetes cluster.
+
+#### Shadow Launch Setup
+
+Verify Pods Running
+
+```bash
+kubectl get pods
+```
+
+Port-Forward the service
+
+```bash
+kubectl port-forward svc/model-service 8081:8081
+```
+
+**Keep this running.**
+
+#### Testing
+
+Send Test Request
+```bash
+for i in {1..10}; do
+  curl -X POST http://127.0.0.1:8081/predict -H "Content-Type: application/json" -d '{"sms": "Hello world, test message"}'
+done
+```
+
+#### Check Shadow Launch
+
+```bash
+# Count model-service-deployment requests
+kubectl logs $(kubectl get pods | grep model-service-deployment | awk '{print $1}') -c model | grep -c "POST /predict"
+
+# Count model-shadow requests
+echo "model-shadow total (shadow):"
+kubectl logs $(kubectl get pods | grep model-shadow | awk '{print $1}') -c model | grep -c "POST /predict"
+```
 
 ## Kubernetes Manifests Deployment
 
@@ -314,94 +409,3 @@ See:
 - [Grafana Dashboards](#grafana-dashboards)
 
 _Note:_ You have to run the port-forward commands in the `ctrl` VM or using the exported kubeconfig from the host machine.
-
-kubectl get secret sms-checker-grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
-```
-
-## running istio in minikube cluster
-
-```
-minikube delete
-minikube start --memory=8192 --cpus=4
-minikube addons enable istio-provisioner
-minikube addons enable istio
-minikube addons enable ingress
-
-
-kubectl label namespace default istio-injection-
-helm uninstall sms-checker
-helm install sms-checker .
-kubectl label namespace default istio-injection=enabled
-kubectl rollout restart deployment
-```
-
-wait for all pods to run
-```
-kubectl get pod
-```
-
-make sure app pods have sidecar
-```
-kubectl get pod <pod name> -o jsonpath='{.spec.containers[*].name}'
-```
-it should display app istio-proxy
-
-connect to istio loadbalancer with minikube tunnel
-
-make sure loadbalancer has external ip 
-```
-kubectl get svc -n istio-system istio-ingressgateway-ingressgateway
-```
-external should not be <pending>
-
-test if istio works:
-```
-curl -H "Host: sms-checker-app" http://<external ip>:80
-```
-
-can open in browser at http://<external ip>:80
-```
-echo "<external ip> sms-checker-app" | sudo tee -a /etc/hosts
-```
-
-## Additional Istio Use Case: Shadow Launch
-
-### Prerequisite
-
-Istio installed in the Kubernetes cluster.
-
-### Shadow Launch Setup
-
-Verify Pods Running
-
-```bash
-kubectl get pods
-```
-
-Port-Forward the service
-
-```bash
-kubectl port-forward svc/model-service 8081:8081
-```
-
-**Keep this running.**
-
-### Testing
-
-Send Test Request
-```bash
-for i in {1..10}; do
-  curl -X POST http://127.0.0.1:8081/predict -H "Content-Type: application/json" -d '{"sms": "Hello world, test message"}'
-done
-```
-
-### Check Shadow Launch
-
-```bash
-# Count model-service-deployment requests
-kubectl logs $(kubectl get pods | grep model-service-deployment | awk '{print $1}') -c model | grep -c "POST /predict"
-
-# Count model-shadow requests
-echo "model-shadow total (shadow):"
-kubectl logs $(kubectl get pods | grep model-shadow | awk '{print $1}') -c model | grep -c "POST /predict"
-```

@@ -99,3 +99,7 @@
 - Riya: https://github.com/doda25-team15/operation/pull/91
   
   Implemented an additional istio use case: shadow launch
+
+- Frederik: https://github.com/doda25-team15/operation/pull/96
+
+  Fixed a bug with the spam detection gauge, implemented feedback from Peer.

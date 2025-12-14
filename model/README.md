@@ -1,4 +1,4 @@
-# Example Model
+# Model
 
 This folder contains an example model deployment that can be used to mount to the model-service in the Kubernetes cluster.
 

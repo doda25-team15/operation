@@ -7,20 +7,20 @@ metadata:
     app: {{ .Values.labels.model.app }}
     component: model
     role: shadow
-    version: v2
+    version: v3
 spec:
   replicas: {{ .Values.shadow.replicas }}
   selector:
     matchLabels:
       app: {{ .Values.labels.model.app }}
       role: shadow
-      version: v2
+      version: v3
   template:
     metadata:
       labels:
         app: {{ .Values.labels.model.app }}
         role: shadow
-        version: v2
+        version: v3
         component: model
     spec:
       containers:
@@ -29,10 +29,9 @@ spec:
           imagePullPolicy: {{ .Values.shadow.image.pullPolicy }}
           ports:
             - containerPort: {{ .Values.service.model.port }}
-          env:
-            - name: VERSION
-              value: "v2"
-{{- if .Values.shadow.volume.enabled }}
+          envFrom:
+            - secretRef:
+                name: {{ .Values.secret.name }}
           volumeMounts:
             - name: shadow-output
               mountPath: {{ .Values.volumeMounts.mountPath }}
@@ -41,5 +40,4 @@ spec:
               hostPath:
                 path: {{ .Values.shadow.volume.hostPath }}
                 type: DirectoryOrCreate
-{{- end }}
 {{- end }}

@@ -5,6 +5,7 @@ metadata:
   labels:
     app: {{ .Values.labels.app.app }}
     component: {{ .Values.labels.app.component }}
+    version: v2
     chart: {{ .Chart.Name }}-{{ .Chart.Version }}
     release: {{ .Release.Name }}
 spec:
@@ -13,6 +14,7 @@ spec:
     matchLabels:
       app: {{ .Values.labels.app.app }}
       component: {{ .Values.labels.app.component }}
+      version: v2
   template:
     metadata:
       labels:
@@ -21,11 +23,11 @@ spec:
         version: v2
     spec:
       containers:
-        - name: app
-          image: "{{ .Values.image.app.repository }}:{{ .Values.image.app.tag }}"
-          imagePullPolicy: {{ .Values.image.app.pullPolicy }}
-          ports:
-            - containerPort: {{ .Values.service.app.port }}
-          envFrom:
-            - configMapRef:
-                name: {{ .Values.configMap.name }}
+      - name: app
+        image: "{{ .Values.image.app.repository }}:{{ .Values.image.app.tag }}"
+        imagePullPolicy: {{ .Values.image.app.pullPolicy }}
+        ports:
+        - containerPort: {{ .Values.service.app.port }}
+        envFrom:
+          - configMapRef:
+              name: {{ .Values.configMap.name }}

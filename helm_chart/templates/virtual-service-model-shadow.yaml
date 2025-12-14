@@ -2,7 +2,7 @@
 apiVersion: networking.istio.io/v1beta1
 kind: VirtualService
 metadata:
-  name: virtualservice-model-shadow
+  name: sms-checker-vs-model-shadow
   labels:
     app: {{ .Values.labels.model.app }}
 spec:
@@ -19,7 +19,21 @@ spec:
       host: {{ .Values.service.model.name }}
       port:
           number: {{ .Values.service.model.port }}
-      subset: v2
+      subset: v3
+    mirrorPercentage:
+      value: {{ .Values.shadow.mirrorPercentage }}
+
+  - route:
+    - destination:
+        host: {{ .Values.service.model.name }}
+        port:
+          number: {{ .Values.service.model.port }}
+        subset: v2
+    mirror:
+      host: {{ .Values.service.model.name }}
+      port:
+          number: {{ .Values.service.model.port }}
+      subset: v3
     mirrorPercentage:
       value: {{ .Values.shadow.mirrorPercentage }}
 {{- end }}

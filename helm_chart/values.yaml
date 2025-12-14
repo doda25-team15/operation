@@ -89,18 +89,19 @@ monitoring:
         labelValue: "1"
         searchNamespace: ALL
 
-istio: 
-  gateway: 
+istio:
+  gateway:
     name: sms-checker-gateway
+    ingressGatewaySelector: ingressGateway
 
 shadow:
   enabled: true
   name: model-shadow
+  replicas: 1
   image:
     repository: ghcr.io/doda25-team15/model-service
     tag: latest
     pullPolicy: IfNotPresent
-  replicas: 1
   volume:
     enabled: false
     hostPath: /mnt/shared/output-shadow

@@ -1,23 +1,24 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Values.labels.model.name }}-deployment
+  name: {{ .Values.labels.model.name }}-deployment-canary
   labels:
     app: {{ .Values.labels.model.app }}
-    version: v1
     chart: {{ .Chart.Name }}-{{ .Chart.Version }}
+    version: v2
     release: {{ .Release.Name }}
+    version: v1
 spec:
   replicas: {{ .Values.replicaCount.model }}
   selector:
     matchLabels:
       app: {{ .Values.labels.model.app }}
-      version: v1
+      version: v2
   template:
     metadata:
       labels:
         app: {{ .Values.labels.model.app }}
-        version: v1
+        version: v2
     spec:
       containers:
       - name: model

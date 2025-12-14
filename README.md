@@ -236,9 +236,8 @@ Port-Forward the service
 
 ```bash
 kubectl port-forward svc/model-service 8081:8081
+# Keep this running
 ```
-
-**Keep this running.**
 
 #### Testing
 

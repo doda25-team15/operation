@@ -241,14 +241,18 @@ http://localhost:8080/sms/
 
 Istio installed in the Kubernetes cluster.
 
-A running Istio Ingress-Gateway from the previous setup
-
 #### Shadow Launch Setup
 
 Verify Shadow Pod Running
 
 ```bash
 kubectl get pods
+```
+
+Port-forward the Istio Ingress-Gateway
+
+```bash
+kubectl port-forward -n istio-system svc/istio-ingressgateway 8080:80
 ```
 
 #### Testing
@@ -264,7 +268,7 @@ done
 
 #### Check Shadow Launch
 
-The count of model-shadow logs will be equal to model-service-deployment-v1 + model-service-deployment-canary logs.
+The count of model-shadow logs will be equal to model-service-deployment-v1 + model-service-deployment-canary logs count if the traffic is split at model service otherwise model-shadow log count equals the model-service-deployment-v1 log count.
 
 ```bash
 # Count model-service-deployment-v1 requests

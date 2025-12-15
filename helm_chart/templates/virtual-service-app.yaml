@@ -19,8 +19,17 @@ spec:
             host: {{ .Values.service.app.name }}
             port:
               number: {{ .Values.service.app.port }}
+            subset: v2
     - route:
         - destination:
             host: {{ .Values.service.app.name }}
             port:
               number: {{ .Values.service.app.port }}
+            subset: v1
+          weight: {{ .Values.trafficManagement.weights.stable }}
+        - destination:
+            host: {{ .Values.service.app.name }}
+            port:
+              number: {{ .Values.service.app.port }}
+            subset: v2
+          weight: {{ .Values.trafficManagement.weights.canary }}

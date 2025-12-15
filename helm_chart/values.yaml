@@ -94,6 +94,11 @@ istio:
     name: sms-checker-gateway
     ingressGatewaySelector: ingressgateway
 
+trafficManagement:
+  weights:
+    stable: 90
+    canary: 10
+
 shadow:
   enabled: true
   name: model-shadow

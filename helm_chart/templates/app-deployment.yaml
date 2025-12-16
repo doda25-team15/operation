@@ -1,10 +1,11 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Values.labels.app.name }}-deployment
+  name: {{ .Values.labels.app.name }}-deployment-v1
   labels:
     app: {{ .Values.labels.app.app }}
     component: {{ .Values.labels.app.component }}
+    version: v1
     chart: {{ .Chart.Name }}-{{ .Chart.Version }}
     release: {{ .Release.Name }}
 spec:
@@ -13,6 +14,7 @@ spec:
     matchLabels:
       app: {{ .Values.labels.app.app }}
       component: {{ .Values.labels.app.component }}
+      version: v1
   template:
     metadata:
       labels:

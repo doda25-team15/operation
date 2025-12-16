@@ -1,0 +1,17 @@
+{{- if not .Values.shadow.enabled }}
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: sms-checker-vs-model
+  labels:
+    app: {{ .Values.labels.model.app }}
+spec:
+  hosts:
+    - {{ .Values.service.model.name }}
+  http:
+    - route:
+        - destination:
+            host: {{ .Values.service.model.name }}
+            port:
+              number: {{ .Values.service.model.port }}
+{{- end }}

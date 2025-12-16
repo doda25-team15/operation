@@ -1,0 +1,35 @@
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: sms-checker-vs-app
+  labels:
+    app: {{ .Values.labels.app.app }}
+spec:
+  hosts:
+    - "*"
+  gateways:
+    - {{ .Values.istio.gateway.name }}
+  http:
+    - match:
+        - headers:
+            testing:
+              exact: "true"
+      route:
+        - destination:
+            host: {{ .Values.service.app.name }}
+            port:
+              number: {{ .Values.service.app.port }}
+            subset: v2
+    - route:
+        - destination:
+            host: {{ .Values.service.app.name }}
+            port:
+              number: {{ .Values.service.app.port }}
+            subset: v1
+          weight: {{ .Values.trafficManagement.weights.stable }}
+        - destination:
+            host: {{ .Values.service.app.name }}
+            port:
+              number: {{ .Values.service.app.port }}
+            subset: v2
+          weight: {{ .Values.trafficManagement.weights.canary }}

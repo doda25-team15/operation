@@ -235,6 +235,28 @@ Open in browser
 http://localhost:8080/sms/
 ```
 
+### Test stickiness
+
+Creates new session (new cookie) and displays it in the terminal:
+
+```bash
+curl -H "Host: sms-checker-app" -v http://<external ip>:80
+```
+
+It is possible to save this cookie and store in a txt file to use it:
+```bash
+curl -c cookies.txt -b cookies.txt -H "Host: sms-checker-app" -v http://<external ip>:80
+```
+txt is automatically generated and the cookie is placed there.
+
+Can also send cookie without creating new files, but you will have to copy the cookie:
+
+```bash
+curl -H "Host: sms-checker-app" \
+     -H 'Cookie: user-session="<cookie>"' \
+     -v http://<external ip>
+```
+
 ### Additional Istio Use Case: Shadow Launch
 
 #### Prerequisite

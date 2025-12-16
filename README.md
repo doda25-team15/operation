@@ -102,6 +102,8 @@ To access the application, add an entry to your `/etc/hosts` file:
 echo "127.0.0.1 sms-checker-app" | sudo tee -a /etc/hosts
 ```
 
+See the `management.md` file for instructions on how to change the hostname.
+
 Port-forward the Nginx Ingress Controller:
 
 ```bash

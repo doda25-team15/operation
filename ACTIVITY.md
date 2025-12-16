@@ -103,3 +103,7 @@
 - Frederik: https://github.com/doda25-team15/operation/pull/96
 
   Fixed a bug with the spam detection gauge, implemented feedback from Peer.
+
+- Emils: https://github.com/doda25-team15/operation/pull/90, https://github.com/doda25-team15/operation/pull/92
+
+  started working on traffic management and created inventory ini generation

@@ -98,6 +98,10 @@ trafficManagement:
   weights:
     stable: 90
     canary: 10
+  stickySessions:
+    enabled: true
+    cookieName: user-session
+    ttl: 3600s
 
 shadow:
   enabled: true

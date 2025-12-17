@@ -10,10 +10,13 @@ spec:
   host: {{ .Values.service.app.name }}
   trafficPolicy:
     loadBalancer:
+      {{- if .Values.trafficManagement.stickySessions.enabled }}
       consistentHash:
         httpCookie:
-          name: user-session
-          ttl: 3600s
+          name: {{ .Values.trafficManagement.stickySessions.cookieName }}
+          ttl: {{ .Values.trafficManagement.stickySessions.ttl }}
+      {{- end }}
+
     connectionPool:
       http:
         http1MaxPendingRequests: 1024

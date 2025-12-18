@@ -7,3 +7,7 @@ This document describes the deployment architecture for the SMS Spam Checker app
 ## Provisioning Infrastructure
 
 ![Provisioning Architecture](./attachments/provisioning-architecture.drawio.png)
+
+## Deployment Architecture
+
+![Deployment Architecture](./attachments/deployment-architecture.drawio.png)

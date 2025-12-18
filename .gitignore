@@ -2,3 +2,4 @@
 .vagrant
 admin.conf
 charts
+*.bkp

@@ -16,6 +16,7 @@ image:
     app:
         repository: ghcr.io/doda25-team15/app
         tag: v1.0.8
+        canarytag: v1.0.9
         pullPolicy: IfNotPresent
     model:
         repository: ghcr.io/doda25-team15/model-service

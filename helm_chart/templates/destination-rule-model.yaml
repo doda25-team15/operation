@@ -1,0 +1,24 @@
+{{- if .Values.shadow.enabled }}
+apiVersion: networking.istio.io/v1beta1
+kind: DestinationRule
+metadata:
+  name: {{ .Release.Name }}-model-dr
+  labels:
+    app: {{ .Values.labels.model.app }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version }}
+    release: {{ .Release.Name }}
+spec:
+  host: {{ .Values.service.model.name }}
+  trafficPolicy:
+    connectionPool:
+      http:
+        http1MaxPendingRequests: 1024
+        maxRequestsPerConnection: 1024
+  subsets:
+  - name: v1
+    labels:
+      version: v1
+  - name: v3
+    labels:
+      version: v3
+{{- end }}

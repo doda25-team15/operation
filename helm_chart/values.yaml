@@ -15,7 +15,8 @@ labels:
 image:
     app:
         repository: ghcr.io/doda25-team15/app
-        tag: v1.0.7
+        tag: v1.0.8
+        canarytag: v1.0.9
         pullPolicy: IfNotPresent
     model:
         repository: ghcr.io/doda25-team15/model-service
@@ -45,7 +46,7 @@ volume:
 
 volumeMounts:
     name: volume-cache
-    mountPath: /output
+    mountPath: /app/output
 
 configMap:
   name: env-config-map
@@ -57,10 +58,28 @@ secret:
 
 monitoring:
   prometheus:
+    enabled: true
     prometheusSpec:
       serviceMonitorSelector:
         matchLabels:
           team: doda25-team15
+    service:
+      sessionAffinity: ""
+
+  alertmanager:
+    service:
+      sessionAffinity: ""
+
+  coreDns:
+    enabled: false
+  kubeEtcd:
+    enabled: false
+  kubeControllerManager:
+    enabled: false
+  kubeScheduler:
+    enabled: false
+  kubeProxy:
+    enabled: false
 
   grafana:
     enabled: true
@@ -70,3 +89,30 @@ monitoring:
         label: grafana_dashboard
         labelValue: "1"
         searchNamespace: ALL
+
+istio:
+  gateway:
+    name: sms-checker-gateway
+    ingressGatewaySelector: ingressgateway
+
+trafficManagement:
+  weights:
+    stable: 90
+    canary: 10
+  stickySessions:
+    enabled: true
+    cookieName: user-session
+    ttl: 3600s
+
+shadow:
+  enabled: true
+  name: model-shadow
+  replicas: 1
+  image:
+    repository: ghcr.io/doda25-team15/model-service
+    tag: latest
+    pullPolicy: IfNotPresent
+  volume:
+    enabled: true
+    hostPath: /mnt/shared/output-shadow
+  mirrorPercentage: 100

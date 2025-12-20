@@ -69,16 +69,51 @@
 
 - Arjun: https://github.com/doda25-team15/operation/pull/68
   Fixed the error of gaining authorization into Kubernetes Dashboard. Installed Istio (v1.25.2) by downloading it, adding istioctl to PATH, and running the Istio installation for service-mesh support.
-- Riya: https://github.com/doda25-team15/operation/pull/69
+  <<<<<<< HEAD
+- # Riya: https://github.com/doda25-team15/operation/pull/69
+- Riya: https://github.com/doda25-team15/operation/pull/69, https://github.com/doda25-team15/model-service/pull/7
 
-  Updated the application to run Kubernetes deployment using minikube and kubectl. Created Helm Chart and its deployment configuration.
+  > > > > > > > main
+
+  Updated the application to run Kubernetes deployment using minikube and kubectl. Created Helm Chart and its deployment configuration. Worked on feedback received regarding A1 to make the docker images public and separate the workflows.
 
 - Frederik: https://github.com/doda25-team15/model-service/pull/8
 
+  Moved training of model outside `docker run`.
+
 - Sneha: https://github.com/doda25-team15/app/pull/12, https://github.com/doda25-team15/operation/pull/74
 
-  Moved training of model outside `docker run`.
+- Emīls: https://github.com/doda25-team15/operation/pull/67
+
+  Migrate from Docker Compose to Kubernetes
 
 - Jimmy: https://github.com/doda25-team15/operation/pull/72
 
   Worked on start of Grafana dashboards.
+
+### Week 5 (Dec 8-14)
+
+- Arjun: https://github.com/doda25-team15/operation/pull/87
+  Worked on resolving the warnings which show up when installing helm
+
+- Jimmy: https://github.com/doda25-team15/operation/pull/84, https://github.com/doda25-team15/operation/pull/86
+
+  Fixed the failing model-service pods. Fixed prometheus not picking up metrics from the app. Added a Grafana dashboard for the custom metrics. Simplified the README.md file.
+
+- Riya: https://github.com/doda25-team15/operation/pull/91
+
+  Implemented an additional istio use case: shadow launch
+
+- Frederik: https://github.com/doda25-team15/operation/pull/96
+
+  Fixed a bug with the spam detection gauge, implemented feedback from Peer.
+
+- Emils: https://github.com/doda25-team15/operation/pull/90, https://github.com/doda25-team15/operation/pull/92
+
+  started working on traffic management and created inventory ini generation
+
+### Week 6 (Dec 15-21)
+
+- Jimmy: https://github.com/doda25-team15/operation/pull/104
+
+  Made a start of the deployment document, created a diagram for the deployment architecture and for the provisioning architecture.

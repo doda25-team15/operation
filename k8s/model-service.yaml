@@ -24,7 +24,7 @@ spec:
               name: app-secrets
         volumeMounts:
           - name: volume-cache
-            mountPath: /output
+            mountPath: /app/output
       volumes:
         - name: volume-cache
           hostPath:

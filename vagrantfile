@@ -50,6 +50,27 @@ Vagrant.configure("2") do |config|
     end
   end
 
+  config.vm.provision "shell", run: "always" do |s|   #generates inventory ini
+    s.inline = <<-SHELL
+      INVENTORY_FILE="/vagrant/ansible/inventory.ini"
+
+      echo "[ctrl]" > $INVENTORY_FILE
+      echo "ctrl ansible_host=192.168.56.100" >> $INVENTORY_FILE
+      echo "" >> $INVENTORY_FILE
+
+      echo "[nodes]" >> $INVENTORY_FILE
+    SHELL
+  end
+
+  (1..WORKER_COUNT).each do |i|
+    config.vm.provision "shell", run: "always" do |s|
+      ip = "192.168.56.#{100 + i}"
+      s.inline = <<-SHELL
+        echo "node-#{i} ansible_host=#{ip}" >> /vagrant/ansible/inventory.ini
+      SHELL
+    end
+  end
+
   config.vm.provision "ansible" do |ansible|
     ansible.playbook = "./ansible/general.yaml"
     ansible.limit = "all"

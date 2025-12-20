@@ -108,7 +108,7 @@ The Model Service exposes a REST API for predicting whether an SMS message is sp
 
 ### Istio
 
-Istio is used as a service mesh to manage the traffic between the App and Model Service deployments. It has an Ingress Gateway that exposes the App Service for external traffic into the service mesh. There are two Virtual Services defined, one for traffic routing between the App and Model Service deployments, and another for the traffic routing to the App Service via the Ingress Gateway.The first one is responsible for mirroring the traffic from the stable Model Service deployment to the shadow deployment for testing purposes. The second Virtual Service is responsible for routing 90% of the traffic to the stable App deployment and 10% to the canary deployment, allowing for a canary release strategy.
+Istio is used as a service mesh to manage the traffic between the App and Model Service deployments. It has an Ingress Gateway that exposes the App Service for external traffic into the service mesh. There are two Virtual Services defined, one for traffic routing between the App and Model Service deployments, and another for the traffic routing to the App Service via the Ingress Gateway. The first one is responsible for mirroring the traffic from the stable Model Service deployment to the shadow deployment for testing purposes. The second Virtual Service is responsible for routing 90% of the traffic to the stable App deployment and 10% to the canary deployment, allowing for a canary release strategy.
 
 **Ingress Gateway:**
 

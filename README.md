@@ -99,20 +99,24 @@ kubectl get pods
 To access the application, add an entry to your `/etc/hosts` file:
 
 ```bash
-echo "127.0.0.1 sms-checker-app" | sudo tee -a /etc/hosts
+kubectl get svc -n istio-system istio-ingressgateway
+```
+
+```bash
+echo "<external ip> sms-checker-app" | sudo tee -a /etc/hosts
 ```
 
 See the `management.md` file for instructions on how to change the hostname.
 
-Port-forward the Nginx Ingress Controller:
+If the external IP is pending, you have to Port-forward the Istio Ingress Controller:
 
 ```bash
 # Using kubectl
-kubectl port-forward -n ingress-nginx \
-  service/ingress-nginx-controller 8080:80
+kubectl port-forward -n istio-system \
+  service/istio-ingressgateway 8080:80
 
 # Or using minikube
-minikube service ingress-nginx-controller -n ingress-nginx --url
+minikube service istio-ingressgateway -n istio-system --url
 ```
 
 Now you can open:
@@ -202,7 +206,7 @@ kubectl get pod <pod name> -o jsonpath='{.spec.containers[*].name}'
 Connect to Istio load balancer with minikube tunnel
 
 ```bash
-# Make sure loadbalancer has external ip 
+# Make sure loadbalancer has external ip
 kubectl get svc -n istio-system istio-ingressgateway
 ```
 
@@ -246,9 +250,11 @@ curl -H "Host: sms-checker-app" -v http://<external ip>:80
 ```
 
 It is possible to save this cookie and store in a txt file to use it:
+
 ```bash
 curl -c cookies.txt -b cookies.txt -H "Host: sms-checker-app" -v http://<external ip>:80
 ```
+
 txt is automatically generated and the cookie is placed there.
 
 Can also send cookie without creating new files, but you will have to copy the cookie:
@@ -282,8 +288,9 @@ kubectl port-forward -n istio-system svc/istio-ingressgateway 8080:80
 #### Testing
 
 Send test requests
+
 ```bash
-for i in {1..10}; do      
+for i in {1..10}; do
   curl -X POST http://127.0.0.1:8080/sms \
     -H "Content-Type: application/json" \
     -d '{"sms":"Hello world, test message"}'

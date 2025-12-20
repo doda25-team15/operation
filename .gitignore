@@ -3,3 +3,4 @@
 admin.conf
 charts
 *.bkp
+*.DS_Store

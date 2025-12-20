@@ -98,7 +98,7 @@
 
 - Riya: https://github.com/doda25-team15/operation/pull/91
 
-  Implemented an additional istio use case: shadow launch
+  Implemented shadow launch as the additional istio use case.
 
 - Frederik: https://github.com/doda25-team15/operation/pull/96
 
@@ -113,3 +113,7 @@
 - Jimmy: https://github.com/doda25-team15/operation/pull/104
 
   Made a start of the deployment document, created a diagram for the deployment architecture and for the provisioning architecture.
+
+- Riya: https://github.com/doda25-team15/operation/pull/95
+
+  Update traffic management implementation to include canary release for model service.

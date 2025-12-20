@@ -93,11 +93,11 @@
   Worked on resolving the warnings which show up when installing helm
 
 - Jimmy: https://github.com/doda25-team15/operation/pull/84, https://github.com/doda25-team15/operation/pull/86
-  
+
   Fixed the failing model-service pods. Fixed prometheus not picking up metrics from the app. Added a Grafana dashboard for the custom metrics. Simplified the README.md file.
 
 - Riya: https://github.com/doda25-team15/operation/pull/91
-  
+
   Implemented an additional istio use case: shadow launch
 
 - Frederik: https://github.com/doda25-team15/operation/pull/96
@@ -107,3 +107,9 @@
 - Emils: https://github.com/doda25-team15/operation/pull/90, https://github.com/doda25-team15/operation/pull/92
 
   started working on traffic management and created inventory ini generation
+
+### Week 6 (Dec 15-21)
+
+- Jimmy: https://github.com/doda25-team15/operation/pull/104
+
+  Made a start of the deployment document, created a diagram for the deployment architecture and for the provisioning architecture.

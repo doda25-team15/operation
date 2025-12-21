@@ -117,3 +117,7 @@
 - Riya: https://github.com/doda25-team15/operation/pull/95
 
   Update traffic management implementation to include canary release for model service.
+
+- Emils: https://github.com/doda25-team15/operation/pull/98, https://github.com/doda25-team15/operation/pull/97
+
+  update stickiness and introduce change to canary to use different app image

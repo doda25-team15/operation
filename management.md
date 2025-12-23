@@ -58,19 +58,19 @@ kubectl describe ingress
 
 Change number of replicas:
 
-```
+```bash
 helm install sms-checker . --set replicaCount.app=5
 ```
 
 Change Ingress hostname:
 
-```
+```bash
 helm install sms-checker . --set ingress.host=myapp.local
 ```
 
 Inject SMTP Credentials:
 
-```
+```bash
 helm install sms-checker . \
   --set secret.smtpUser="abc@mail" \
   --set secret.smtpPass="secret"
@@ -78,15 +78,18 @@ helm install sms-checker . \
 
 Disable Ingress:
 
-```
+```bash
 helm install sms-checker . --set ingress.enabled=false
 ```
 
 **Verify changes:**
 
-```
-# Check replica count
+Check replica count:
+```bash
 kubectl get pods -l component=app
-# Check hostname
+```
+
+Check hostname:
+```bash
 kubectl get ingress app-ingress -o jsonpath='{.spec.rules[0].host}'
 ```

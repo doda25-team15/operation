@@ -64,21 +64,21 @@ kubectl wait --namespace ingress-nginx \
 
 The model service requires trained model files. You can use the example model files provided in the `model/` directory of this repository. See [operation/model/README.md](./model/README.md) for details. Or use the trained model files from the [releases page](https://github.com/doda25-team15/model-service/releases). Once obtained, copy them to the minikube mounted volume:
 
-```bash
-# 1. Create directory in minikube
-minikube ssh "sudo mkdir -p /mnt/shared/output"
-```
+1. Create directory in minikube
+   ```bash
+   minikube ssh "sudo mkdir -p /mnt/shared/output"
+   ```
 
-```bash
-# 2. Copy model files
-minikube cp ./model/model.joblib /mnt/shared/output/model.joblib
-minikube cp ./model/preprocessor.joblib /mnt/shared/output/preprocessor.joblib
-```
+2. Copy model files
+   ```bash
+   minikube cp ./model/model.joblib /mnt/shared/output/model.joblib
+   minikube cp ./model/preprocessor.joblib /mnt/shared/output/preprocessor.joblib
+   ```
 
-```bash
-# 3. Verify the files are copied
-minikube ssh "ls -lh /mnt/shared/output/"
-```
+3. Verify the files are copied
+   ```bash
+   minikube ssh "ls -lh /mnt/shared/output/"
+   ```
 
 ### 3. Deploy with Helm
 
@@ -87,8 +87,8 @@ helm dependency build ./helm_chart
 helm install sms-checker ./helm_chart
 ```
 
+Verify all pods are running and ready before proceeding with next steps:
 ```bash
-# Verify all pods are running and ready before proceeding with next steps
 kubectl get pods
 ```
 
@@ -110,12 +110,14 @@ See the `management.md` file for instructions on how to change the hostname.
 
 If the external IP is pending, you have to Port-forward the Istio Ingress Controller:
 
+Using kubectl:
 ```bash
-# Using kubectl
 kubectl port-forward -n istio-system \
   service/istio-ingressgateway 8080:80
+```
 
-# Or using minikube
+Or using minikube:
+```bash
 minikube service istio-ingressgateway -n istio-system --url
 ```
 
@@ -130,48 +132,52 @@ We use Prometheus from the kube-prometheus-stack Helm chart to automatically col
 
 1. Port-forward the Prometheus service:
 
-```bash
-# Using kubectl
-kubectl port-forward svc/sms-checker-monitoring-prometheus 9090:9090
+   Using kubectl:
+   ```bash
+   kubectl port-forward svc/sms-checker-monitoring-prometheus 9090:9090
+   ```
 
-# Or using minikube
-minikube service sms-checker-monitoring-prometheus --url
-```
+   Or using minikube:
+   ```bash
+   minikube service sms-checker-monitoring-prometheus --url
+   ```
 
-1. Open Prometheus in your browser http://localhost:9090
+2. Open Prometheus in your browser http://localhost:9090
 
-2. Go to Status → Target health and confirm that the targets created by the ServiceMonitors are UP (job names containing sms-checker).
-3. In the Query tab, you can run queries for the custom metrics exposed by the app:
+3. Go to Status → Target health and confirm that the targets created by the ServiceMonitors are UP (job names containing sms-checker).
+4. In the Query tab, you can run queries for the custom metrics exposed by the app:
 
-- `sms_requests_total` (Counter): Total number of SMS requests completed
-- `sms_requests_inflight` (Gauge): Current number of SMS requests being processed
-- `sms_request_latency_seconds` (Histogram): How long each SMS request took to complete
+   - `sms_requests_total` (Counter): Total number of SMS requests completed
+   - `sms_requests_inflight` (Gauge): Current number of SMS requests being processed
+   - `sms_request_latency_seconds` (Histogram): How long each SMS request took to complete
 
 ### Grafana Dashboards
 
 1. Port-forward the Grafana service:
 
-```bash
-# Using kubectl
-kubectl port-forward svc/sms-checker-grafana 3000:80
+   Using kubectl:
+   ```bash
+   kubectl port-forward svc/sms-checker-grafana 3000:80
+   ```
 
-# Or using minikube
-minikube service sms-checker-grafana --url
-```
+   Or using minikube:
+   ```bash
+   minikube service sms-checker-grafana --url
+   ```
 
-1. Open Grafana in your browser at http://localhost:3000
+2. Open Grafana in your browser at http://localhost:3000
 
-2. Default credentials (from kube-prometheus-stack):
+3. Default credentials (from kube-prometheus-stack):
    - Username: `admin`
    - Password: Get it with:
 
-```bash
-kubectl get secret sms-checker-grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
-```
+     ```bash
+     kubectl get secret sms-checker-grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
+     ```
 
-3. You can now check the pre-configured dashboards:
+4. You can now check the pre-configured dashboards:
 
-- SMS Checker - Custom Metrics Dashboard
+   - SMS Checker - Custom Metrics Dashboard
 
 ### Traffic Management using Istio
 
@@ -190,23 +196,23 @@ kubectl label namespace default istio-injection=enabled
 kubectl rollout restart deployment
 ```
 
-Wait for all pods to run
+Wait for all pods to run:
 
 ```bash
 kubectl get pods
 ```
 
-Make sure app pods have sidecar
+Make sure app pods have sidecar:
 
+Displays app istio-proxy
 ```bash
-# Displays app istio-proxy
 kubectl get pod <pod name> -o jsonpath='{.spec.containers[*].name}'
 ```
 
 Connect to Istio load balancer with minikube tunnel
 
+Make sure loadbalancer has external ip
 ```bash
-# Make sure loadbalancer has external ip
 kubectl get svc -n istio-system istio-ingressgateway
 ```
 
@@ -303,14 +309,18 @@ done
 
 The count of model-shadow logs will be equal to model-service-deployment-v1 + model-service-deployment-canary logs count if the traffic is split at model service otherwise model-shadow log count equals the model-service-deployment-v1 log count.
 
+Count model-service-deployment-v1 requests:
 ```bash
-# Count model-service-deployment-v1 requests
 kubectl logs deploy/model-service-deployment-v1 | grep -c predict
+```
 
-# Count model-service-deployment-canary requests
+Count model-service-deployment-canary requests:
+```bash
 kubectl logs deploy/model-service-deployment-canary | grep -c predict
+```
 
-# Count model-shadow requests
+Count model-shadow requests:
+```bash
 kubectl logs deploy/model-shadow | grep -c predict
 ```
 
@@ -376,8 +386,8 @@ This will provision a Kubernetes cluster on VirtualBox VMs using Vagrant and Ans
 vagrant up
 ```
 
+Verify cluster status in ctrl (all nodes should be Ready):
 ```bash
-# Verify cluster status in ctrl (all nodes should be Ready)
 vagrant ssh ctrl
 kubectl get nodes
 ```
@@ -394,8 +404,8 @@ ansible-playbook -u vagrant -i 192.168.56.100, ./ansible/finalization.yml
 
 Now that the cluster is ready, you can deploy the SMS Checker application using either the Helm chart or the Kubernetes manifests.
 
+Go to the operation directory on the ctrl VM:
 ```bash
-# Go to the operation directory on the ctrl VM
 vagrant ssh ctrl
 cd /vagrant
 ```
@@ -413,12 +423,14 @@ _Note:_ Step 1 and 2 are not needed, since the cluster is already provisioned an
 
 You can access the Kubernetes cluster also from the host machine (instead of via ssh into the ctrl VM):
 
+Using the exported kubeconfig:
 ```bash
-# Using the exported kubeconfig
 export KUBECONFIG=./admin.conf
 kubectl get nodes
+```
 
-# or directly:
+Or directly:
+```bash
 kubectl --kubeconfig=./admin.conf get nodes
 ```
 
@@ -447,11 +459,13 @@ http://dashboard.192.168.56.90.nip.io
 
 Use the `admin-user` ServiceAccount token to log in. You can create one token by executing the following command when ssh'd into the `ctrl`:
 
+ssh into ctrl:
 ```bash
-# ssh into ctrl
 vagrant ssh ctrl
+```
 
-# Create token for admin-user
+Create token for admin-user:
+```bash
 kubectl -n kubernetes-dashboard create token admin-user
 ```
 

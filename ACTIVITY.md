@@ -125,3 +125,7 @@
 - Frederik: https://github.com/doda25-team15/app/pull/13, https://github.com/doda25-team15/operation/pull/107
 
   I made an endpoint on app for libversion and worked on fixing advanced versioning for libversion.
+
+- Arjun: NO PRs
+
+Approved and reviewed other's PRs but couldnt get started working on my work because it was dependant on others work.

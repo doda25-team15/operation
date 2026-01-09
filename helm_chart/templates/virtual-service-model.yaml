@@ -9,9 +9,35 @@ spec:
   hosts:
     - {{ .Values.service.model.name }}
   http:
+    - match:
+      - sourceLabels:
+          app: {{ .Values.labels.app.app }}
+          version: v1
+      route:
+      - destination:
+          host: {{ .Values.service.model.name }}
+          port:
+            number: {{ .Values.service.model.port }}
+          subset: v1
+    - match:
+      - sourceLabels:
+          app: {{ .Values.labels.app.app }}
+          version: v2
+      fault:
+        delay:
+          percentage:
+            value: 100
+          fixedDelay: 2s
+      route:
+      - destination:
+          host: {{ .Values.service.model.name }}
+          port:
+            number: {{ .Values.service.model.port }}
+          subset: v2
     - route:
         - destination:
             host: {{ .Values.service.model.name }}
             port:
               number: {{ .Values.service.model.port }}
+            subset: v1
 {{- end }}

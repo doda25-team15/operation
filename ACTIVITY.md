@@ -128,4 +128,10 @@
 
 - Arjun: NO PRs
 
-Approved and reviewed other's PRs but couldnt get started working on my work because it was dependant on others work.
+  Approved and reviewed other's PRs but couldn't get started working on my work because it was dependant on others work.
+
+### Week 7 (Jan 5-11)
+
+- Riya: https://github.com/doda25-team15/operation/pull/117
+
+  Update canary routing for model service and separate model service volume mounts for stable and canary versions.

@@ -26,80 +26,64 @@
 
 ## Run the application
 
-There are multiple ways to run the SMS Spam Checker application:
-
-1. [Helm Chart Deployment (Recommended)](#helm-chart-deployment-recommended)
-2. [Kubernetes Manifests Deployment](#kubernetes-manifests-deployment)
-3. [Docker Compose](#docker-compose-deployment)
-4. [Vagrant and Ansible Provisioning](#vagrant-and-ansible-provisioning)
-
-_Note:_ For the Kubernetes deployments we are using minikube as the local Kubernetes cluster. If you use some other Kubernetes cluster, make sure to adapt the instructions according to your setup.
-
-## Helm Chart Deployment (Recommended)
+The SMS Spam Checker application is meant to be deployed on a provisioned Kubernetes cluster running on VirtualBox VMs. However, one could also deploy it on a local Kubernetes cluster using a tool like MiniKube (See [./docs/MiniKube.md](./docs/minikube.md)).
 
 ### Prerequisites
 
-- Docker
-- Minikube
-- Kubectl
-- Helm
+- Vagrant (with VirtualBox provider)
+- VirtualBox
+- Ansible
+- Helm (optional, for deployment from host)
+- Kubectl (optional, for cluster management from host)
 
-### 1. Start Minikube Cluster
+### 1. Provisioning Kubernetes Cluster using Vagrant and Ansible
 
-```bash
-minikube start --driver=docker
-minikube addons enable ingress
-```
-
-Wait for ingress controller to be ready:
+This will provision a Kubernetes cluster on VirtualBox VMs using Vagrant and Ansible:
 
 ```bash
-kubectl wait --namespace ingress-nginx \
-  --for=condition=ready pod \
-  --selector=app.kubernetes.io/component=controller \
-  --timeout=120s
+vagrant up
 ```
 
-### 2. Setup Model Files
+Verify cluster status in ctrl (all nodes should be Ready):
+```bash
+# From within ctrl VM:
+vagrant ssh ctrl
+kubectl get nodes
 
-The model service requires trained model files. You can use the example model files provided in the `model/` directory of this repository. See [operation/model/README.md](./model/README.md) for details. Or use the trained model files from the [releases page](https://github.com/doda25-team15/model-service/releases). Once obtained, copy them to the minikube mounted volume:
+# Or directly from host machine:
+kubectl --kubeconfig=./admin.conf get nodes
+```
 
-1. Create directory in minikube
-   ```bash
-   minikube ssh "sudo mkdir -p /mnt/shared/output"
-   ```
-
-2. Copy model files
-   ```bash
-   minikube cp ./model/model.joblib /mnt/shared/output/model.joblib
-   minikube cp ./model/preprocessor.joblib /mnt/shared/output/preprocessor.joblib
-   ```
-
-3. Verify the files are copied
-   ```bash
-   minikube ssh "ls -lh /mnt/shared/output/"
-   ```
-
-### 3. Deploy with Helm
+### 2. Helm Chart Deployment
 
 ```bash
-helm dependency build ./helm_chart
-helm install sms-checker ./helm_chart
+helm --kubeconfig=./admin.conf install sms-checker ./helm_chart --dependency-update
 ```
 
-Verify all pods are running and ready before proceeding with next steps:
+Verify all pods are running:
 ```bash
-kubectl get pods
+kubectl --kubeconfig=./admin.conf get pods
 ```
 
-### 4. Access
+### Halting the Cluster
+To halt the cluster without destroying the VMs, run:
+```bash
+vagrant halt
+```
 
-### Application
+### Uninstall
+To uninstall the application, run:
+
+```bash
+vagrant destroy -f
+```
+
+## Application
 
 To access the application, add an entry to your `/etc/hosts` file:
 
 ```bash
-kubectl get svc -n istio-system istio-ingressgateway
+kubectl --kubeconfig=./admin.conf get svc -n istio-system istio-ingressgateway
 ```
 
 ```bash
@@ -107,20 +91,6 @@ echo "<external ip> sms-checker-app" | sudo tee -a /etc/hosts
 ```
 
 See the `management.md` file for instructions on how to change the hostname.
-
-If the external IP is pending, you have to Port-forward the Istio Ingress Controller:
-
-Using kubectl:
-```bash
-kubectl port-forward -n istio-system \
-  service/istio-ingressgateway 8080:80
-```
-
-Or using minikube:
-```bash
-minikube service istio-ingressgateway -n istio-system --url
-```
-
 Now you can open:
 
 - Frontend Application: http://sms-checker-app:8080/sms
@@ -324,123 +294,6 @@ Count model-shadow requests:
 kubectl logs deploy/model-shadow-v3 | grep -c predict
 ```
 
-## Kubernetes Manifests Deployment
-
-### Prerequisites
-
-- Docker
-- Kubectl
-- Minikube
-
-### 1. Start Minikube Cluster
-
-See [Helm Chart Deployment -> Step 1](#1-start-minikube-cluster)
-
-### 2. Setup Model Files
-
-See [Helm Chart Deployment -> Step 2](#2-setup-model-files)
-
-### 3. Deploy using Kubernetes Manifests
-
-```bash
-kubectl apply -f k8s/ -R
-```
-
-### 4. Access
-
-### Application
-
-See [Helm Chart Deployment -> Access -> Application](#application).
-
-_Note:_ Prometheus and Grafana are not included when deploying using Kubernetes manifests.
-
-## Docker Compose Deployment
-
-This will run a local development deployment, without a Kubernetes cluster.
-
-_Note:_ This will use the model files in the `model/` directory. If you want to use default model files or test this logic, then you can clear the `model/` directory before starting the deployment. When there are no model files, the model service will download them from the latest release on GitHub.
-
-### Prerequisites
-
-- Docker
-
-### 1. Docker Compose
-
-```bash
-docker compose up
-```
-
-### Vagrant and Ansible Provisioning
-
-This will provision a Kubernetes cluster on VirtualBox VMs using Vagrant and Ansible.
-
-### Prerequisites
-
-- Vagrant
-- VirtualBox
-- Ansible
-
-### 1. Provision VMs and Initialize Cluster
-
-```bash
-vagrant up
-```
-
-Verify cluster status in ctrl (all nodes should be Ready):
-```bash
-vagrant ssh ctrl
-kubectl get nodes
-```
-
-### 2. Deployment on the Provisioned Cluster
-
-Now that the cluster is ready, you can deploy the SMS Checker application using either the Helm chart or the Kubernetes manifests.
-
-Go to the operation directory on the ctrl VM:
-```bash
-vagrant ssh ctrl
-cd /vagrant
-```
-
-Now you can follow the instructions from either:
-
-- [Helm Chart Deployment](#helm-chart-deployment-recommended) (from Step 3)
-- [Kubernetes Manifests Deployment](#kubernetes-manifests-deployment) (from Step 3)
-
-_Note:_ Step 1 and 2 are not needed, since the cluster is already provisioned and we automatically copy the model files from `/model` on the host machine to the shared volumes on the VMs in the Ansible playbooks.
-
-### 3. Access
-
-### Cluster
-
-You can access the Kubernetes cluster also from the host machine (instead of via ssh into the ctrl VM):
-
-Using the exported kubeconfig:
-```bash
-export KUBECONFIG=./admin.conf
-kubectl get nodes
-```
-
-Or directly:
-```bash
-kubectl --kubeconfig=./admin.conf get nodes
-```
-
-This can for example help you with the port-forwarding for accessing Prometheus and Grafana.
-
-### Application
-
-To access the application, you have to add an entry to your `/etc/hosts` file on your host machine:
-
-```bash
-echo "192.168.56.90 sms-checker-app" | sudo tee -a /etc/hosts
-```
-
-Now you can open:
-
-- Frontend Application: http://sms-checker-app/sms
-- Application Metrics: http://sms-checker-app/metrics
-
 ### Kubernetes Dashboard
 
 You can access the Kubernetes Dashboard by navigating to the following URL in your web browser:
@@ -460,12 +313,3 @@ Create token for admin-user:
 ```bash
 kubectl -n kubernetes-dashboard create token admin-user
 ```
-
-#### Grafana and Prometheus
-
-See:
-
-- [Prometheus Monitoring](#prometheus-monitoring)
-- [Grafana Dashboards](#grafana-dashboards)
-
-_Note:_ You have to run the port-forward commands in the `ctrl` VM or using the exported kubeconfig from the host machine.

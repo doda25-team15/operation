@@ -241,6 +241,14 @@ Port-forward the Istio Ingress-Gateway
 kubectl port-forward -n istio-system svc/istio-ingressgateway 8080:80
 ```
 
+To see if 90/10 split is definitely working, you can run check-traffic.sh
+
+```bash
+chmod +x check-traffic.sh
+EXTERNAL_IP=<external ip> ./check-traffic.sh
+EXTERNAL_IP=<external ip> REQUESTS=1000 ./check_split_no_stickiness.sh
+```
+
 Open in browser
 
 ```bash

@@ -32,7 +32,7 @@ spec:
                 name: {{ .Values.secret.name }}
           volumeMounts:
             - name: shadow-output
-              mountPath: {{ .Values.volumeMounts.mountPath }}
+              mountPath: {{ .Values.volumeMounts.stable.mountPath }}
       volumes:
           - name: shadow-output
             hostPath:

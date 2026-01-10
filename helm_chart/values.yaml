@@ -41,12 +41,20 @@ ingress:
     host: sms-checker-app
 
 volume:
-    name: volume-cache
+  stable:
+    name: volume-cache-stable
     hostPath: /mnt/shared/output
+  canary:
+    name: volume-cache-canary
+    hostPath: /mnt/shared/output-canary
 
 volumeMounts:
-    name: volume-cache
-    mountPath: /app/output
+    stable:
+      name: volume-cache-stable
+      mountPath: /app/output
+    canary:
+      name: volume-cache-canary
+      mountPath: /app/output
 
 configMap:
   name: env-config-map

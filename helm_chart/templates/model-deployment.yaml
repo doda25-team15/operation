@@ -29,10 +29,10 @@ spec:
           - secretRef:
               name: {{ .Values.secret.name }}
         volumeMounts:
-          - name: {{ .Values.volumeMounts.name }}
-            mountPath: {{ .Values.volumeMounts.mountPath }}
+          - name: {{ .Values.volumeMounts.stable.name }}
+            mountPath: {{ .Values.volumeMounts.stable.mountPath }}
       volumes:
-        - name: {{ .Values.volume.name }}
+        - name: {{ .Values.volume.stable.name }}
           hostPath:
-            path: {{ .Values.volume.hostPath }}
+            path: {{ .Values.volume.stable.hostPath }}
             type: DirectoryOrCreate

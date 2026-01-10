@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Values.labels.app.name }}-deployment-canary
+  name: {{ .Values.labels.app.name }}-deployment-canary-v2
   labels:
     app: {{ .Values.labels.app.app }}
     component: {{ .Values.labels.app.component }}

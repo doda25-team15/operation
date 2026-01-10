@@ -9,9 +9,27 @@ spec:
   hosts:
     - {{ .Values.service.model.name }}
   http:
+    - match:
+        - headers:
+            testing:
+              exact: "true"
+      route:
+        - destination:
+            host: {{ .Values.service.model.name }}
+            port:
+              number: {{ .Values.service.model.port }}
+            subset: v2
     - route:
         - destination:
             host: {{ .Values.service.model.name }}
             port:
               number: {{ .Values.service.model.port }}
+            subset: v1
+          weight: 100
+        - destination:
+            host: {{ .Values.service.model.name }}
+            port:
+              number: {{ .Values.service.model.port }}
+            subset: v2
+          weight: 0
 {{- end }}

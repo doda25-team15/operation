@@ -316,12 +316,12 @@ kubectl logs deploy/model-service-deployment-v1 | grep -c predict
 
 Count model-service-deployment-canary requests:
 ```bash
-kubectl logs deploy/model-service-deployment-canary | grep -c predict
+kubectl logs deploy/model-service-deployment-canary-v2 | grep -c predict
 ```
 
 Count model-shadow requests:
 ```bash
-kubectl logs deploy/model-shadow | grep -c predict
+kubectl logs deploy/model-shadow-v3 | grep -c predict
 ```
 
 ## Kubernetes Manifests Deployment

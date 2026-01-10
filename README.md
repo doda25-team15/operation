@@ -241,6 +241,14 @@ Port-forward the Istio Ingress-Gateway
 kubectl port-forward -n istio-system svc/istio-ingressgateway 8080:80
 ```
 
+To see if 90/10 split is definitely working, you can run check-traffic.sh
+
+```bash
+chmod +x check-traffic.sh
+EXTERNAL_IP=<external ip> ./check-traffic.sh
+EXTERNAL_IP=<external ip> REQUESTS=1000 ./check_split_no_stickiness.sh
+```
+
 Open in browser
 
 ```bash
@@ -248,6 +256,8 @@ http://localhost:8080/sms/
 ```
 There is 10% chance to see canary release for app. if you keep spamming curl command you will see "Hello World! testing canary" eventually, which means you 
 are connected to the canary release pod.
+
+
 
 ### Test stickiness
 

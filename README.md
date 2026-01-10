@@ -392,15 +392,7 @@ vagrant ssh ctrl
 kubectl get nodes
 ```
 
-### 2. Finalize Cluster Setup
-
-After the VMs are provisioned and the cluster is initialized, run the `finalization.yml` playbook to install MetalLB, Nginx Ingress Controller and Kubernetes Dashboard. Make sure you don't run this command from within the `ctrl` VM, but from your host machine:
-
-```bash
-ansible-playbook -u vagrant -i 192.168.56.100, ./ansible/finalization.yml
-```
-
-### 3. Deployment on the Provisioned Cluster
+### 2. Deployment on the Provisioned Cluster
 
 Now that the cluster is ready, you can deploy the SMS Checker application using either the Helm chart or the Kubernetes manifests.
 
@@ -417,7 +409,7 @@ Now you can follow the instructions from either:
 
 _Note:_ Step 1 and 2 are not needed, since the cluster is already provisioned and we automatically copy the model files from `/model` on the host machine to the shared volumes on the VMs in the Ansible playbooks.
 
-### 4. Access
+### 3. Access
 
 ### Cluster
 

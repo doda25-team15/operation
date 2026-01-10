@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Values.labels.model.name }}-deployment-canary
+  name: {{ .Values.labels.model.name }}-deployment-canary-v2
   labels:
     app: {{ .Values.labels.model.app }}
     version: v2
@@ -19,6 +19,22 @@ spec:
         app: {{ .Values.labels.model.app }}
         version: v2
     spec:
+      initContainers:
+        - name: init-canary-model
+          image: busybox
+          command:
+            - sh
+            - -c
+            - |
+              echo "[init] Seeding canary model"
+              if [ ! -f /app/output/model.bin ]; then
+                cp /models/canary-model.bin /app/output/model.bin
+              fi
+          volumeMounts:
+            - name: {{ .Values.volume.canary.name }}
+              mountPath: {{ .Values.volumeMounts.canary.mountPath }}
+            - name: model-artifacts
+              mountPath: /models
       containers:
       - name: model
         image: "{{ .Values.image.model.repository }}:{{ .Values.image.model.tag }}"
@@ -29,10 +45,13 @@ spec:
           - secretRef:
               name: {{ .Values.secret.name }}
         volumeMounts:
-          - name: {{ .Values.volumeMounts.name }}
-            mountPath: {{ .Values.volumeMounts.mountPath }}
+          - name: {{ .Values.volumeMounts.canary.name }}
+            mountPath: {{ .Values.volumeMounts.canary.mountPath }}
       volumes:
-        - name: {{ .Values.volume.name }}
+        - name: {{ .Values.volume.canary.name }}
           hostPath:
-            path: {{ .Values.volume.hostPath }}
+            path: {{ .Values.volume.canary.hostPath }}
             type: DirectoryOrCreate
+        - name: model-artifacts
+          configMap:
+            name: canary-model-config

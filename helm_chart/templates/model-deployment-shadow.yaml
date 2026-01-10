@@ -2,7 +2,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Values.shadow.name }}
+  name: {{ .Values.shadow.name }}-v3
   labels:
     app: {{ .Values.labels.model.app }}
     version: v3
@@ -32,7 +32,7 @@ spec:
                 name: {{ .Values.secret.name }}
           volumeMounts:
             - name: shadow-output
-              mountPath: {{ .Values.volumeMounts.mountPath }}
+              mountPath: {{ .Values.volumeMounts.stable.mountPath }}
       volumes:
           - name: shadow-output
             hostPath:

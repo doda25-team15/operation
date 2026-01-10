@@ -1,0 +1,12 @@
+{{- if not .Values.shadow.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: canary-model-config
+  labels:
+    app: {{ .Values.labels.model.app }}
+    release: {{ .Release.Name }}
+data:
+  canary-model.bin: |
+    DEFAULT_CANARY_MODEL
+{{- end }}

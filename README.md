@@ -246,7 +246,7 @@ To see if 90/10 split is definitely working, you can run check-traffic.sh
 ```bash
 chmod +x check-traffic.sh
 EXTERNAL_IP=<external ip> ./check-traffic.sh
-EXTERNAL_IP=<external ip> REQUESTS=1000 ./check_split_no_stickiness.sh
+EXTERNAL_IP=<external ip> REQUESTS=1000 ./check-traffic.sh
 ```
 
 Open in browser

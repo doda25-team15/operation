@@ -257,8 +257,6 @@ http://localhost:8080/sms/
 There is 10% chance to see canary release for app. if you keep spamming curl command you will see "Hello World! testing canary" eventually, which means you 
 are connected to the canary release pod.
 
-
-
 ### Test stickiness
 
 Creates new session (new cookie) and displays it in the terminal:

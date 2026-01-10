@@ -1,10 +1,10 @@
 #!/bin/bash
-echo "Starting Continuous Load Test (Press Ctrl+C to stop)..."
+echo "Starting Load Test (100 iterations)..."
 echo "Sending a mix of: "
 echo " - 80% Standard Traffic (Routes 90% to v1, 10% to v2)"
 echo " - 20% Forced Canary Traffic (Routes 100% to v2)"
 
-while true; do
+for i in {1..100}; do
   # 1. Standard Request (Mostly v1)
   curl -s -o /dev/null -X POST \
      -H "Content-Type: application/json" \
@@ -29,3 +29,5 @@ while true; do
 
   sleep 0.5
 done
+
+echo "Load test complete!"

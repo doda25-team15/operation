@@ -1,6 +1,7 @@
 .idea
 .vagrant
 admin.conf
+ansible/inventory.cfg
 charts
 *.bkp
 *.DS_Store

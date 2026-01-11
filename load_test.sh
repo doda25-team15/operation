@@ -24,7 +24,7 @@ for i in {1..100}; do
      -H "Content-Type: application/json" \
      -H "Host: sms-checker-app" \
      -H "testing: true" \
-     -d '{"sms":"canary test","guess":"ham"}' \
+     -d '{"sms":"standard request","guess":"ham"}' \
      http://localhost:8080/sms/
 
   sleep 0.5

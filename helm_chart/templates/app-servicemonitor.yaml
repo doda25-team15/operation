@@ -5,7 +5,8 @@ metadata:
   labels:
     app: app
     team: doda25-team15
-    app.kubernetes.io/managed-by: sms-checker
+    release: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
 spec:
   selector:
     matchLabels:

@@ -68,15 +68,16 @@ monitoring:
   prometheus:
     enabled: true
     prometheusSpec:
-      serviceMonitorSelector:
-        matchLabels:
-          team: doda25-team15
+      serviceMonitorSelector: {}
+      serviceMonitorNamespaceSelector: {}
+      ruleSelector: {}
+      ruleNamespaceSelector: {}
     service:
-      sessionAffinity: ""
+      sessionAffinity: None
 
   alertmanager:
     service:
-      sessionAffinity: ""
+      sessionAffinity: None
 
   coreDns:
     enabled: false

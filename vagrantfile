@@ -50,12 +50,12 @@ Vagrant.configure("2") do |config|
     end
   end
 
-  config.vm.provision "shell", run: "always" do |s|   #generates inventory ini
+  config.vm.provision "shell", run: "always" do |s|
     s.inline = <<-SHELL
-      INVENTORY_FILE="/vagrant/ansible/inventory.ini"
+      INVENTORY_FILE="/vagrant/ansible/inventory.cfg"
 
       echo "[ctrl]" > $INVENTORY_FILE
-      echo "ctrl ansible_host=192.168.56.100" >> $INVENTORY_FILE
+      echo "ctrl ansible_host=192.168.56.100 ansible_user=vagrant" >> $INVENTORY_FILE
       echo "" >> $INVENTORY_FILE
 
       echo "[nodes]" >> $INVENTORY_FILE
@@ -66,7 +66,7 @@ Vagrant.configure("2") do |config|
     config.vm.provision "shell", run: "always" do |s|
       ip = "192.168.56.#{100 + i}"
       s.inline = <<-SHELL
-        echo "node-#{i} ansible_host=#{ip}" >> /vagrant/ansible/inventory.ini
+        echo "node-#{i} ansible_host=#{ip} ansible_user=vagrant" >> /vagrant/ansible/inventory.cfg
       SHELL
     end
   end
@@ -87,6 +87,15 @@ Vagrant.configure("2") do |config|
   config.vm.provision "ansible" do |ansible|
     ansible.playbook = "./ansible/node.yaml"
     ansible.limit = "all"  #filtered in node.yaml
+  end
+
+  # Run finalization only after all nodes are provisioned
+  config.trigger.after :up do |trigger|
+    trigger.name = "Finalize Cluster Setup"
+    trigger.only_on = "node-#{WORKER_COUNT}" # Only on last worker
+    trigger.run = {
+      inline: "ansible-playbook -i ./ansible/inventory.cfg --limit ctrl ./ansible/finalization.yml"
+    } # Runs finalization playbook on ctrl using generated inventory
   end
 
 end

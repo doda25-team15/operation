@@ -135,3 +135,7 @@
 - Riya: https://github.com/doda25-team15/operation/pull/117
 
   Update canary routing for model service and separate model service volume mounts for stable and canary versions.
+
+- Arjun: https://github.com/doda25-team15/operation/pull/116
+
+  Added continuous experimentation to the model service.

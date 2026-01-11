@@ -139,3 +139,6 @@
 - Arjun: https://github.com/doda25-team15/operation/pull/116
 
   Added continuous experimentation to the model service.
+- Jimmy: https://github.com/doda25-team15/operation/pull/120
+
+  Improved vagrantfile according to requirements, updated readme file for better clarity and fixed some small bugs.

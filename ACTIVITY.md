@@ -146,3 +146,8 @@
 - Emils: https://github.com/doda25-team15/operation/pull/119
 
   added sh script to test 90/10 split in the traffic
+
+### Week 8 (Jan 12-18)
+
+- Arjun: https://github.com/doda25-team15/operation/pull/122
+Added extension proposal for automated canary deployments with Flagger.

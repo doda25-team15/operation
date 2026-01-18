@@ -147,6 +147,10 @@
 
   added sh script to test 90/10 split in the traffic
 
+- Frederik: https://github.com/doda25-team15/lib-version/pull/3
+
+  Fixed advanced versioning scheme by adding custom GitHub App that can push to protected branches.
+
 ### Week 8 (Jan 12-18)
 
 - Arjun: https://github.com/doda25-team15/operation/pull/122

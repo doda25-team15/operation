@@ -24,7 +24,7 @@ We will monitor the experiment using a Grafana dashboard.
   - If Model v2 latency > Model v1 latency OR Error Rate v2 > Error Rate v1 -> **Rollback v2**.
 
 ## 5. Visualization
-![Grafana Dashboard](grafana_dashboard.jpeg)
+![Grafana Dashboard](./attachments/grafana_dashboard.png)
 
 ## 6. Results & Conclusion
 **Date:** 2026-01-09

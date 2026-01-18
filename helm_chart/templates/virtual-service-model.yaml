@@ -23,11 +23,13 @@ spec:
       - sourceLabels:
           app: {{ .Values.labels.app.app }}
           version: v2
+      {{- if .Values.trafficManagement.faultInjection.enabled }}
       fault:
         delay:
           percentage:
             value: 100
-          fixedDelay: 2s
+          fixedDelay: {{ .Values.trafficManagement.faultInjection.delay }}
+      {{- end }}
       route:
       - destination:
           host: {{ .Values.service.model.name }}

@@ -83,7 +83,7 @@ The Model Service exposes a REST API for predicting whether an SMS message is sp
 
 **Deployments:**
 
-- **model-deployment-v1** (Stable)
+- **model-service-deployment-v1** (Stable)
 
   - Replicas: 2
   - Image: `ghcr.io/doda25-team15/model-service:v1.0.2`
@@ -91,7 +91,7 @@ The Model Service exposes a REST API for predicting whether an SMS message is sp
   - Port: 8081
   - Volume: `/mnt/shared/output` → `/app/output`
 
-- **model-deployment-v2** (Canary)
+- **model-service-deployment-canary-v2** (Canary)
 
   - Replicas: 2
   - Image: `ghcr.io/doda25-team15/model-service:v1.0.2`
@@ -123,11 +123,11 @@ Istio is used as a service mesh to manage the traffic between the App and Model 
 
 - Routes 100% of traffic from canary App deployment to canary Model Service deployment.
 - Routes 100% of traffic from stable App deployment to stable Model Service deployment.
-- Mirrors 100% of traffic from stable Model Service deployment to shadow Model Service deployment.
+- Mirrors 100% of traffic to the shadow Model Service deployment for testing purposes.
 
 **Destination Rules:**
 
-- Ensures users consistently route to the same version during their session.
+- Ensures users consistently route to the same App version during their session using cookie-based sticky sessions.
 
 ### MetalLB
 

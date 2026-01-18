@@ -14,6 +14,8 @@
     - [Prometheus](#prometheus)
     - [Grafana](#grafana)
     - [Kubernetes Dashboard](#kubernetes-dashboard)
+  - [Request Flow](#request-flow)
+  - [External Access Summary](#external-access-summary)
 
 ---
 
@@ -160,3 +162,64 @@ Grafana is used for visualizing the metrics collected by Prometheus. It provides
 ### Kubernetes Dashboard
 
 Kubernetes Dashboard is a web-based UI for managing and monitoring the Kubernetes cluster. It provides an overview of the cluster's resources, workloads, and namespaces. The dashboard can be accessed at `http://dashboard.192.168.56.90.nip.io`.
+
+## Request Flow
+
+The request path through the deployed system proceeds as follows, including all routing decisions and experimental behaviour.
+
+1. ***Client → Istio Ingress Gateway***
+
+    A user sends an HTTP POST request to the public application hostname exposed by the Istio Ingress Gateway.
+    The request targets the /sms endpoint and contains the SMS text in the request body. Optional headers may be included to support experimentation.
+
+2. ***Ingress Gateway → App VirtualService***
+
+    The Istio Gateway forwards the request to the VirtualService associated with the application.
+    At this point, Istio evaluates routing rules such as weights, header matches, and sticky-session configuration.
+
+3. ***Canary Routing Decision (90/10 split)***
+
+    The VirtualService applies a weighted routing rule that sends:
+    - 90% of requests to the stable version of the app-service
+    - 10% of requests to the canary version of the app-service
+
+    Sticky sessions ensure that once a user is assigned to a version, subsequent requests are consistently routed to the same version.
+
+4. ***App-Service → Model-Service (Version-Aligned Routing)***
+
+    The selected app-service version forwards the request to the corresponding model-service version.
+    DestinationRules ensure version consistency, preventing traffic from a new app-service reaching an old model-service (and vice versa).
+
+5. ***Shadow Traffic Mirroring (Experimental Use Case)***
+
+    In parallel to the primary request path, Istio mirrors the request to a shadow deployment of the model-service.
+    The shadow service processes the request but does not influence the response returned to the user.
+
+6. ***Model Inference and Metrics Collection***
+
+    The primary model-service performs inference and returns the classification result to the app-service.
+    Both the primary and shadow services emit Prometheus metrics describing request volume, latency, and classification outcomes.
+
+7. ***Response → Client***
+
+    The app-service returns the final classification result to the user via the Istio Ingress Gateway.
+
+8. ***Monitoring and Visualisation***
+    
+    Prometheus scrapes metrics from all relevant services.
+    Grafana dashboards visualise differences between stable, canary, and shadow traffic to support experimental evaluation.
+
+MetalLB Load Balancer is used to assign a stable external IP to the Istio Ingress Gateway but does not participate in per-request routing and is therefore not included in the logical request flow.
+
+## External Access Summary
+
+The following table provides an overview of how external users and operators access the deployed system.
+
+| Hostname | Path | Method | Headers | Purpose |
+|---------|------|--------|---------|---------|
+| `app.<domain>` | `/sms` | `POST` | *(optional)* `testing=true` | Submit an SMS for classification and participate in canary routing |
+| `app.<domain>` | `/metrics` | `GET` | — | Expose application metrics for Prometheus scraping |
+| `grafana.<domain>` | `/` | `GET` | — | Access Grafana dashboards for monitoring and experimentation |
+| `dashboard.<domain>` | `/` | `GET` | — | Access the Kubernetes Dashboard for cluster inspection |
+
+The `<domain>` placeholder represents the deployment-specific hostname configured via Helm values and mapped to the Istio Ingress Gateway IP (e.g., through local DNS or `/etc/hosts`).

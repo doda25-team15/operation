@@ -161,3 +161,7 @@ Added extension proposal for automated canary deployments with Flagger.
   Finalized the deployment document and add fault injection toggle to values.yaml and make it disabled by default.
 
 - Frederik: https://github.com/doda25-team15/lib-version/commit/403f7402640f2ab10c208f0c2d37df343549c340
+
+- Riya: https://github.com/doda25-team15/operation/pull/124
+  
+  Add sections for request flow and external access summary in the deployment document.

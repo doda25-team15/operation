@@ -112,6 +112,9 @@ trafficManagement:
     enabled: true
     cookieName: user-session
     ttl: 3600s
+  faultInjection:
+    enabled: false # To enable the delay for canary model service (for testing purposes)
+    delay: 2s
 
 shadow:
   enabled: true
@@ -119,7 +122,7 @@ shadow:
   replicas: 1
   image:
     repository: ghcr.io/doda25-team15/model-service
-    tag: latest
+    tag: v1.0.2
     pullPolicy: IfNotPresent
   volume:
     enabled: true

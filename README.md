@@ -265,7 +265,7 @@ port forward for prometheus ui
 ```bash
 kubectl port-forward svc/sms-checker-monitoring-prometheus 9090:9090 -n default
 ```
-get external ip of istio loadbalancer
+get external ip of istio gateway
 ```bash
 minikube tunnel
 kubectl get svc -n istio-system istio-ingressgateway
@@ -278,9 +278,7 @@ seq 1 60 | xargs -n1 -P20 -I{} \
   -d '{"sms":"test message"}' http://<EXTERNAL IP>/sms >/dev/null
 ```
 
-or manually
-```bash
-curl -H "Host: sms-checker-app" http://<external ip>:80
+
 
 ```
 ### Additional Istio Use Case: Shadow Launch

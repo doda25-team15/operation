@@ -1,0 +1,19 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: sms-checker-alerts
+  namespace: default
+  labels:
+    release: sms-checker
+spec:
+  groups:
+  - name: sms-checker.rules
+    rules:
+    - alert: HighSmsRequestSpike
+      expr: sum(increase(sms_requests_total[30s])) > 50
+      for: 0s
+      labels:
+        severity: critical
+      annotations:
+        summary: '{{"{{"}} $value {{"}}"}} requests in last 30s'
+        description: '{{"{{"}} $labels {{"}}"}}'

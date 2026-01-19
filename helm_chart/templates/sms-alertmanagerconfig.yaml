@@ -1,0 +1,22 @@
+apiVersion: monitoring.coreos.com/v1alpha1
+kind: AlertmanagerConfig
+metadata:
+  name: sms-checker-slack
+  namespace: default
+spec:
+  route:
+    receiver: "slack-webhook"
+    groupBy: ['alertname']
+    groupWait: 10s
+    groupInterval: 1m
+    repeatInterval: 1m
+  receivers:
+  - name: "slack-webhook"
+    slackConfigs:
+    - apiURL:
+        name: slack-workflow
+        key: SLACK_WORKFLOW_URL
+      channel: "#alerts"
+      sendResolved: true
+      title: '{{"{{"}} .CommonAnnotations.summary {{"}}"}}'
+      text: '{{"{{"}} .CommonAnnotations.description {{"}}"}}'

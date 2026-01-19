@@ -160,7 +160,9 @@ minikube addons enable ingress
 
 kubectl create secret generic slack-workflow \
   --from-literal=SLACK_WORKFLOW_URL=https://hooks.slack.com/triggers/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
-  --from-literal=SLACK_WORKFLOW_URL=<SLACK_URL>
+
+kubectl create secret generic slack-workflow \           - not sure how to add the secret
+    --from-literal=SLACK_WORKFLOW_URL=<SLACK_URL>
 
 
 

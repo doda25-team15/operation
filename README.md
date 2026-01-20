@@ -259,7 +259,7 @@ curl -H "Host: sms-checker-app" \
 ```
 
 ### Test alerts
-Alerts are sent to slack server
+Alerts are sent to slack server (https://join.slack.com/t/doda25/shared_invite/zt-3nrdzmef8-faBbEdGbKsJ5hF~rNP_6dQ)
 
 port forward for prometheus ui
 ```bash

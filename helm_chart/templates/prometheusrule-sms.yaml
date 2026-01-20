@@ -10,10 +10,10 @@ spec:
   - name: sms-checker.rules
     rules:
     - alert: HighSmsRequestSpike
-      expr: sum(increase(sms_requests_total[30s])) > 50
-      for: 0s
+      expr: rate(sms_requests_total[1m]) > 15
+      for: 2m
       labels:
         severity: critical
       annotations:
-        summary: '{{"{{"}} $value {{"}}"}} requests in last 30s'
+        summary: '{{"{{"}} $value {{"}}"}} requests in last 1m'
         description: '{{"{{"}} $labels {{"}}"}}'

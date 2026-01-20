@@ -256,26 +256,23 @@ curl -H "Host: sms-checker-app" \
 ### Test alerts
 Alerts are sent to slack server (https://join.slack.com/t/doda25/shared_invite/zt-3nrdzmef8-faBbEdGbKsJ5hF~rNP_6dQ)
 
-port forward for prometheus ui
+Port forward for prometheus UI
 ```bash
 kubectl port-forward svc/sms-checker-monitoring-prometheus 9090:9090 -n default
 ```
-get external ip of istio gateway
+Get external ip of istio gateway
 ```bash
 minikube tunnel
 kubectl get svc -n istio-system istio-ingressgateway
 ```
 
-generate traffic 
+Generate traffic 
 ```bash
 seq 1 60 | xargs -n1 -P20 -I{} \
   curl -s -H "Host: sms-checker-app" -X POST -H "Content-Type: application/json" \
   -d '{"sms":"test message"}' http://<EXTERNAL IP>/sms >/dev/null
 ```
 
-
-
-```
 ### Additional Istio Use Case: Shadow Launch
 
 #### Prerequisite

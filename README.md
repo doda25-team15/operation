@@ -158,6 +158,8 @@ minikube addons enable istio-provisioner
 minikube addons enable istio
 minikube addons enable ingress
 
+kubectl create secret generic slack-workflow \
+  --from-literal=SLACK_WORKFLOW_URL=https://hooks.slack.com/triggers/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
 
 kubectl label namespace default istio-injection-
 helm uninstall sms-checker
@@ -251,6 +253,29 @@ curl -H "Host: sms-checker-app" \
      -v http://<external ip>
 ```
 
+### Test alerts
+Alerts are sent to slack server (https://join.slack.com/t/doda25/shared_invite/zt-3nrdzmef8-faBbEdGbKsJ5hF~rNP_6dQ)
+
+port forward for prometheus ui
+```bash
+kubectl port-forward svc/sms-checker-monitoring-prometheus 9090:9090 -n default
+```
+get external ip of istio gateway
+```bash
+minikube tunnel
+kubectl get svc -n istio-system istio-ingressgateway
+```
+
+generate traffic 
+```bash
+seq 1 60 | xargs -n1 -P20 -I{} \
+  curl -s -H "Host: sms-checker-app" -X POST -H "Content-Type: application/json" \
+  -d '{"sms":"test message"}' http://<EXTERNAL IP>/sms >/dev/null
+```
+
+
+
+```
 ### Additional Istio Use Case: Shadow Launch
 
 #### Prerequisite

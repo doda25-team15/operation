@@ -1,9 +1,8 @@
-version: "3.9"
-
 services:
   app-service:
     image: ghcr.io/doda25-team15/app:v1.0.6
     container_name: app-service
+    restart: unless-stopped
     ports:
       - "${APP_PORT}:${APP_PORT}"
     environment:
@@ -15,6 +14,7 @@ services:
   model-service:
     image: ghcr.io/doda25-team15/model-service:v1.0.2
     container_name: model-service
+    restart: unless-stopped
     expose:
       - ${MODEL_SERVICE_PORT}
     environment:

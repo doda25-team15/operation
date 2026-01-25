@@ -165,3 +165,8 @@ Added extension proposal for automated canary deployments with Flagger.
 - Riya: https://github.com/doda25-team15/operation/pull/124
   
   Add sections for request flow and external access summary in the deployment document.
+
+### Week 9 (Jan 19-25)
+
+- Arjun: https://github.com/doda25-team15/operation/pull/125
+Added simulataneous shadow and canary deployment to model service.

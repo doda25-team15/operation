@@ -171,6 +171,10 @@ Added extension proposal for automated canary deployments with Flagger.
 - Arjun: https://github.com/doda25-team15/operation/pull/125
 Added simulataneous shadow and canary deployment to model service.
 
-- Jimmy https://github.com/doda25-team15/operation/pull/128, https://github.com/doda25-team15/operation/pull/131, https://github.com/doda25-team15/lib-version/pull/4
+- Jimmy: https://github.com/doda25-team15/operation/pull/128, https://github.com/doda25-team15/operation/pull/131, https://github.com/doda25-team15/lib-version/pull/4
 
   Updated the deployment document and diagram with prometheus alerting and scraping metrics. Updated lib-version to properly do stable releases for main branch.
+
+- Riya: https://github.com/doda25-team15/operation/pull/129, https://github.com/doda25-team15/app/pull/14
+  
+  Tested entire implementation for assignment 1. Updated docker compose to include restart policy and updated the README in app repository.

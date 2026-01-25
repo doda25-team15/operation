@@ -151,6 +151,9 @@ Prometheus is used for monitoring and alerting. It scrapes metrics from the App 
 - Kubernetes cluster metrics
 - Istio telemetry (traffic, latency, errors)
 
+**Alerting:**
+There is a simple alert configured that sends an alert to a slack channel if there are, on average, more than 15 sms requests sent per second for 2 minutes.
+
 ### Grafana
 
 Grafana is used for visualizing the metrics collected by Prometheus. It provides dashboards for monitoring the performance and health of the SMS Spam Checker application and the Kubernetes cluster. Grafana runs on port 3000 and can be accessed by port forwarding the grafana service from the host machine.

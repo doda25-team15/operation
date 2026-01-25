@@ -165,32 +165,11 @@
         name: containerd
         state: restarted
         enabled: yes
-
+        
     - name: Ensure kubelet is enabled and started
       service:
         name: kubelet
         state: started
         enabled: yes
 
-    - name: Create shared model directory
-      file:
-        path: /mnt/shared/output
-        state: directory
-        mode: '0755'
 
-    - name: Copy model.joblib to nodes
-      copy:
-        src: "{{ playbook_dir }}/../model/model.joblib"
-        dest: /mnt/shared/output/model.joblib
-        mode: '0644'
-
-    - name: Copy preprocessor.joblib to nodes
-      copy:
-        src: "{{ playbook_dir }}/../model/preprocessor.joblib"
-        dest: /mnt/shared/output/preprocessor.joblib
-        mode: '0644'
-
-    - name: Verify model files exist
-      command: ls -lh /mnt/shared/output/
-      register: ls_output
-      changed_when: false

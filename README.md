@@ -40,6 +40,16 @@ The SMS Spam Checker application is meant to be deployed on a provisioned Kubern
 
 This will provision a Kubernetes cluster on VirtualBox VMs using Vagrant and Ansible:
 
+if you have an error, this might fix it
+```bash
+sudo modprobe -r kvm_intel
+```
+
+if you are running your own cluster, remember to add admin.conf to kubectl commands
+```bash
+kubectl --kubeconfig=./admin.conf example
+```
+
 ```bash
 vagrant up
 ```
@@ -58,6 +68,12 @@ kubectl --kubeconfig=./admin.conf get nodes
 
 ```bash
 helm --kubeconfig=./admin.conf install sms-checker ./helm_chart --dependency-update
+```
+
+add secret for stack channel.
+```bash
+kubectl --kubeconfig=./admin.conf create secret generic slack-workflow \
+  --from-literal=SLACK_WORKFLOW_URL=https://hooks.slack.com/triggers/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
 ```
 
 Verify all pods are running:
@@ -104,6 +120,7 @@ We use Prometheus from the kube-prometheus-stack Helm chart to automatically col
 
    Using kubectl:
    ```bash
+   kubectl --kubeconfig=./admin.conf port-forward svc/sms-checker-monitoring-prometheus 9090:9090
    kubectl port-forward svc/sms-checker-monitoring-prometheus 9090:9090
    ```
 
@@ -270,7 +287,7 @@ Generate traffic
 ```bash
 seq 1 60 | xargs -n1 -P20 -I{} \
   curl -s -H "Host: sms-checker-app" -X POST -H "Content-Type: application/json" \
-  -d '{"sms":"test message"}' http://<EXTERNAL IP>/sms >/dev/null
+  -d '{"sms":"test message"}' http://<external ip>/sms >/dev/null
 ```
 
 ### Additional Istio Use Case: Shadow Launch

@@ -1,6 +1,6 @@
 services:
   app-service:
-    image: ghcr.io/doda25-team15/app:v1.0.6
+    image: ghcr.io/doda25-team15/app:v1.2.0
     container_name: app-service
     restart: unless-stopped
     ports:

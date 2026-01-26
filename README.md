@@ -1,6 +1,6 @@
 # DODA 2025 - Team 15
 
-**Team Members:** Emīls Dzintars, Frederik van der Els, Riya Gupta, Arjun Rajesh Nair, Jimmy Oei, Sneha Prashanth
+**Team Members:** Emīls Dzintars, Frederik van der Els, Riya Gupta (6452272), Arjun Rajesh Nair, Jimmy Oei, Sneha Prashanth
 
 ### Repositories
 

@@ -179,6 +179,10 @@ Added simulataneous shadow and canary deployment to model service.
   
   Tested entire implementation for assignment 1. Updated docker compose to include restart policy and updated the README in app repository.
 
+  -Emils: https://github.com/doda25-team15/operation/pull/126
+
+  Added alertrule and connected alerting to stack
+
 ### Week 10 (Jan 26-27)
 
 - Frederik: https://github.com/doda25-team15/operation/pull/134

@@ -66,13 +66,13 @@ The App exposes the user interface for the SMS Spam Checker Application at `/sms
 - **app-deployment-v1** (Stable)
 
   - Replicas: 2
-  - Image: `ghcr.io/doda25-team15/app:v1.2.0`
+  - Image: `ghcr.io/doda25-team15/app:v1.3.0`
   - Label: `version=v1`
   - Port: 8080
 
 - **app-deployment-canary-v2** (Canary)
   - Replicas: 2
-  - Image: `ghcr.io/doda25-team15/app:v1.2.1`
+  - Image: `ghcr.io/doda25-team15/app:v1.3.1`
   - Label: `version=v2`
   - Port: 8080
 

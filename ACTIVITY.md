@@ -188,3 +188,6 @@ Added simulataneous shadow and canary deployment to model service.
 - Frederik: https://github.com/doda25-team15/operation/pull/134
 
   Finalized A4. Did a bunch of other stuff while doing so.
+- Arjun: https://github.com/doda25-team15/operation/pull/135
+
+  Added extension proposal diagram and made some changes to the document.

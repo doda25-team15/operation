@@ -28,10 +28,7 @@ We propose integrating **Flagger**, an Automated Canary Deployment operator for 
 
 ### Visualization of Change
 **Current State:**
-`Dev -> Helm Upgrade (Split 10%) -> Human stares at Grafana -> Helm Upgrade (Split 50%) -> ...`
-
-**Proposed State:**
-`Dev -> Git Push -> Flagger Controller -> (Automated Traffic Shift 5%..10%..50%) -> (Prometheus Check) -> (Success: Promote / Fail: Rollback)`
+![Extension Proposal Diagram](../ext_prop_diagram.png)
 
 ### Concrete Implementation Tasks (1-5 Days)
 This extension is non-trivial but implementable within the timeframe.
@@ -84,4 +81,4 @@ To verify that the extension improves the situation, we will design an **experim
 
 1.  **Google Site Reliability Engineering**, "Chapter 5: Eliminating Toil" and "Chapter 8: Release Engineering". [Link](https://sre.google/sre-book/eliminating-toil/). _Discusses the negative impact of manual operational work and the necessity of automated, safe release processes._
 2.  **Flagger Documentation**, "Istio Canary Deployments". [Link](https://docs.flagger.app/tutorials/istio-progressive-delivery). _Official documentation for implementing the proposed solution._
-3.  **Stefan Prodan (Flagger Creator)**, "GitOps progressive deliveries with Flagger, Helm and Flux". [Link](https://medium.com/google-cloud/gitops-progressive-deliveries-with-flagger-helm-and-flux-78170c2a2100). _A technical blog detailing the architecture and benefits of automated progressive delivery._
+

@@ -220,11 +220,10 @@ MetalLB Load Balancer is used to assign a stable external IP to the Istio Ingres
 
 The following table provides an overview of how external users and operators access the deployed system.
 
-| Hostname | Path | Method | Headers | Purpose |
-|---------|------|--------|---------|---------|
-| `app.<domain>` | `/sms` | `POST` | *(optional)* `testing=true` | Submit an SMS for classification and participate in canary routing |
-| `app.<domain>` | `/metrics` | `GET` | — | Expose application metrics for Prometheus scraping |
-| `grafana.<domain>` | `/` | `GET` | — | Access Grafana dashboards for monitoring and experimentation |
-| `dashboard.<domain>` | `/` | `GET` | — | Access the Kubernetes Dashboard for cluster inspection |
-
-The `<domain>` placeholder represents the deployment-specific hostname configured via Helm values and mapped to the Istio Ingress Gateway IP (e.g., through local DNS or `/etc/hosts`).
+| Component                     | Exposed Via            | Istio Resource                       | Hostname          | Port | Path | Method | Purpose                                      | Remarks                                                |
+| ----------------------------- | ---------------------- | ------------------------------------ | ----------------- | ---- | ---- | ------ | -------------------------------------------- | ------------------------------------------------------ |
+| **Istio Ingress Gateway**     | MetalLB / Port-forward | `Gateway`                            | —                 | 80   | —    | —      | Single external entry point into the cluster | All external traffic flows through this component      |
+| **Application (app-service)** | Istio Ingress Gateway  | `VirtualService` + `DestinationRule` | `sms-checker-app` | 80   | `/`  | GET    | Main user-facing application                 | Supports canary routing and sticky sessions            |
+| **Prometheus**                | Istio Ingress Gateway  | `VirtualService`                     | `prometheus`      | 80   | `/`  | GET    | Metrics collection and querying              | Scrapes `/metrics` endpoints inside the cluster        |
+| **Grafana**                   | Istio Ingress Gateway  | `VirtualService`                     | `grafana`         | 80   | `/`  | GET    | Metrics visualization and dashboards         | Uses Prometheus as data source                         |
+| **Model Service**             | —                      | —                                    | —                 | —    | —    | —      | Model inference backend                      | **Not externally accessible**; internal ClusterIP only |

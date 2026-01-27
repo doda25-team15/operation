@@ -196,3 +196,7 @@ Added simulataneous shadow and canary deployment to model service.
 - Riya: https://github.com/doda25-team15/operation/pull/138
   
   Added the request flow diagram to the deployment document.
+
+- Emils: https://github.com/doda25-team15/operation/pull/139
+
+  fixed alertmanager rule

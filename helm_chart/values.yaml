@@ -65,6 +65,12 @@ secret:
 
 
 monitoring:
+  prometheusOperator:
+    admissionWebhooks:
+      patch:
+        podAnnotations:
+          sidecar.istio.io/inject: "false"
+
   prometheus:
     enabled: true
     prometheusSpec:

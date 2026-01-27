@@ -100,4 +100,7 @@
       environment:
         KUBECONFIG: /home/vagrant/.kube/config
 
+    - name: Enable Istio sidecar injection for default namespace
+      command: kubectl label namespace default istio-injection=enabled --overwrite
+
 

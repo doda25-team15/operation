@@ -185,9 +185,12 @@ Added simulataneous shadow and canary deployment to model service.
 
 ### Week 10 (Jan 26-27)
 
-- Frederik: https://github.com/doda25-team15/operation/pull/134
+- Frederik: https://github.com/doda25-team15/operation/pull/134, https://github.com/doda25-team15/app/pull/15
 
   Finalized A4. Did a bunch of other stuff while doing so.
+
+  Fixed an issue with A3 where we were depending on a Java Prometheus library while we shouldn't.
+
 - Arjun: https://github.com/doda25-team15/operation/pull/135
 
   Added extension proposal diagram and made some changes to the document.

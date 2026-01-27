@@ -57,6 +57,41 @@
     - name: Apply Kubernetes Dashboard Configuration
       command: kubectl apply -f /vagrant/ansible/templates/kubernetes-dashboard.yaml
 
+    - name: Ensure openssl is installed
+      apt:
+        name: openssl
+        state: present
+        update_cache: yes
+      become: yes
+
+    - name: Create directory for dashboard certs
+      file:
+        path: /home/vagrant/dashboard-certs
+        state: directory
+        owner: vagrant
+        group: vagrant
+        mode: "0755"
+      become: yes
+
+    - name: Generate self-signed cert for dashboard (nip.io host)
+      shell: |
+        openssl req -x509 -nodes -days 365 \
+          -newkey rsa:2048 \
+          -keyout /home/vagrant/dashboard-certs/dashboard.key \
+          -out /home/vagrant/dashboard-certs/dashboard.crt \
+          -subj "/CN=dashboard.192.168.56.90.nip.io"
+      args:
+        creates: /home/vagrant/dashboard-certs/dashboard.crt
+      become: yes
+
+    - name: Create or update kubernetes TLS secret for dashboard
+      shell: |
+        kubectl --kubeconfig={{ kubeconfig_path }} -n kubernetes-dashboard create secret tls kubernetes-dashboard-certs \
+          --key=/home/vagrant/dashboard-certs/dashboard.key \
+          --cert=/home/vagrant/dashboard-certs/dashboard.crt --dry-run=client -o yaml \
+          | kubectl --kubeconfig={{ kubeconfig_path }} apply -f -
+      become: yes
+
     # STEP 23 — Install Istio 1.25.2
 
     - name: Download Istio 1.25.2

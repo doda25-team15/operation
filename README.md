@@ -243,7 +243,7 @@ It is possible to save this cookie and store in a txt file to use it:
 curl -c cookies.txt -b cookies.txt -H "Host: sms-checker-app" -v http://<external ip>:80
 ```
 
-txt is automatically generated and the cookie is placed there.
+The txt file is automatically generated and the cookie is placed there.
 
 Can also send cookie without creating new files, but you will have to copy the cookie:
 
@@ -252,6 +252,20 @@ curl -H "Host: sms-checker-app" \
      -H 'Cookie: user-session="<cookie>"' \
      -v http://<external ip>
 ```
+
+Check the app service pod IPs:
+
+```bash
+kubectl get pods -o wide -l app=sms-checker
+```
+
+Test routing behaviour by inspecting Istio proxy logs to verify that requests are routed to the same pod:
+
+```bash
+kubectl logs -l app=sms-checker -c istio-proxy
+```
+
+Repeated requests with the same cookies should show the same upstream pod (look the pod ID from the previous command) in the access logs.
 
 ### Test alerts
 Alerts are sent to slack server (https://join.slack.com/t/doda25/shared_invite/zt-3nrdzmef8-faBbEdGbKsJ5hF~rNP_6dQ)

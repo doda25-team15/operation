@@ -6,7 +6,7 @@ services:
     ports:
       - "${APP_PORT}:${APP_PORT}"
     environment:
-      MODEL_SERVICE_URL: "http://model-service:${MODEL_SERVICE_PORT}"
+      MODEL_HOST: "http://model-service:${MODEL_SERVICE_PORT}"
       PORT: ${APP_PORT}
     depends_on:
       - model-service

@@ -93,8 +93,8 @@ echo "<external ip> sms-checker-app" | sudo tee -a /etc/hosts
 See the `management.md` file for instructions on how to change the hostname.
 Now you can open:
 
-- Frontend Application: http://sms-checker-app:8080/sms
-- Application Metrics: http://sms-checker-app:8080/metrics
+- Frontend Application: http://sms-checker-app/sms
+- Application Metrics: http://sms-checker-app/metrics
 
 ### Prometheus Monitoring
 

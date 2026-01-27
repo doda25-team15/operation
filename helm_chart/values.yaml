@@ -60,9 +60,9 @@ configMap:
   name: env-config-map
 
 secret:
-  name: secret
-  smtpUser: "user"
-  smtpPass: "password"
+  name: slack-workflow
+  slackWorkflowUrl: ""
+
 
 monitoring:
   prometheus:

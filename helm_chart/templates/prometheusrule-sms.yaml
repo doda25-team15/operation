@@ -10,15 +10,10 @@ spec:
   - name: sms-checker.rules
     rules:
     - alert: HighSmsRequestSpike
-      expr: rate(sms_requests_total[1m]) * 60 > 15
-    # - alert: HighSmsRequestSpike
-    #   expr: sum(rate(sms_requests_total{endpoint="http", job="app-service"}[1m])) * 60 > 15
-    #   labels:
-    #     severity: critical
-    # - alert: TestSlack
-    #   expr: vector(1)
-    #   labels:
-    #     severity: critical
-    #   annotations:
-    #     summary: "Test Slack notification"
-    #     description: "This is a test message"
+      expr: rate(sms_requests_total{endpoint="http", job="app-service"}[1m]) * 60 > 15
+      for: 2m
+      labels:
+        severity: critical
+      annotations:
+        summary: "High traffic"
+        description: "Node is experiencing high traffic"

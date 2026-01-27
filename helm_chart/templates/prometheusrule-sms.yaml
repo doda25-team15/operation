@@ -10,7 +10,7 @@ spec:
   - name: sms-checker.rules
     rules:
     - alert: HighSmsRequestSpike
-      expr: rate(sms_requests_total[1m]) > 15
+      expr: rate(sms_requests_total[1m]) * 60 > 15
       for: 2m
       labels:
         severity: critical

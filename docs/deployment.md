@@ -152,7 +152,7 @@ Prometheus is used for monitoring and alerting. It scrapes metrics from the App 
 - Istio telemetry (traffic, latency, errors)
 
 **Alerting:**
-There is a simple alert configured that sends an alert to a slack channel if there are, on average, more than 15 sms requests sent per second for 2 minutes.
+There is a simple alert configured that sends an alert to a slack channel if there are, on average, more than 15 SMS requests sent per minute for 2 minutes.
 
 ### Grafana
 
@@ -169,6 +169,8 @@ Kubernetes Dashboard is a web-based UI for managing and monitoring the Kubernete
 ## Request Flow
 
 The request path through the deployed system proceeds as follows, including all routing decisions and experimental behaviour.
+
+![Request Flow](./attachments/request_flow.png)
 
 1. ***Client → Istio Ingress Gateway***
 

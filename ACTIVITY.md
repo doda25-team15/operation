@@ -185,9 +185,9 @@ Added simulataneous shadow and canary deployment to model service.
 
 ### Week 10 (Jan 26-27)
 
-- Frederik: https://github.com/doda25-team15/operation/pull/134, https://github.com/doda25-team15/app/pull/15, https://github.com/doda25-team15/operation/pull/137
+- Frederik: https://github.com/doda25-team15/operation/pull/134, https://github.com/doda25-team15/app/pull/15, https://github.com/doda25-team15/app/pull/16, https://github.com/doda25-team15/operation/pull/137, https://github.com/doda25-team15/operation/pull/141
 
-  Finalized A4. Did a bunch of other stuff while doing so. Fixed an issue with A3 where we were depending on a Java Prometheus library while we shouldn't. Fixed an issue with `docker-compose.yml` (incorrect env variable was used).
+  Finalized A4. Did a bunch of other stuff while doing so. Fixed an issue with A3 where we were depending on a Java Prometheus library while we shouldn't (later opened a new PR that made the metric fields thread-safe). Fixed an issue with `docker-compose.yml` (incorrect env variable was used). Fixed a small bug in A2 where model files were also being copied to the controller.
 
 - Arjun: https://github.com/doda25-team15/operation/pull/135
 

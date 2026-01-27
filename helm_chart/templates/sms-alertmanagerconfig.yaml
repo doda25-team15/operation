@@ -14,7 +14,7 @@ spec:
   - name: "slack-webhook"
     slackConfigs:
     - apiURL:
-        name: slack-workflow
+        name: {{ .Values.secret.name }}
         key: SLACK_WORKFLOW_URL
       channel: "#alerts"
       sendResolved: true

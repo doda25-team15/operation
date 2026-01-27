@@ -158,12 +158,10 @@ minikube addons enable istio-provisioner
 minikube addons enable istio
 minikube addons enable ingress
 
-kubectl create secret generic slack-workflow \
-  --from-literal=SLACK_WORKFLOW_URL=https://hooks.slack.com/triggers/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
-
 kubectl label namespace default istio-injection-
 helm uninstall sms-checker
-helm install sms-checker .
+helm install sms-checker . \
+  --set secret.slackWorkflowUrl=https://hooks.slack.com/triggers/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
 kubectl label namespace default istio-injection=enabled
 kubectl rollout restart deployment
 ```
@@ -269,6 +267,7 @@ Repeated requests with the same cookies should show the same upstream pod (look 
 
 ### Test alerts
 Alerts are sent to slack server (https://join.slack.com/t/doda25/shared_invite/zt-3nrdzmef8-faBbEdGbKsJ5hF~rNP_6dQ)
+prometheus rule is applied to individual node and not summed together 
 
 Port forward for prometheus UI
 ```bash
